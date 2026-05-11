@@ -3,7 +3,20 @@ import visitor.*;
 
 
 class MyVisitor extends GJDepthFirst<String, Void>{
-   
+    
+    /**
+     * f0 -> MainClass()
+     * f1 -> ( TypeDeclaration() )*
+     * f2 -> <EOF>
+     */
+    // use default visitor for now
+    @Override 
+    public String visit(Goal n, Void argu) throws Exception{
+        n.f0.accept(this, null); // Goal.MainClass.accept(MyVisitor) -> MyVisitor.visit(MainClass)
+        n.f1.accept(this, null);   
+        
+        return "";
+    }
    
     /**
      * f0 -> "class"
@@ -30,7 +43,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
         String classname = n.f1.accept(this, null);
         System.out.println("Class: " + classname);
 
-        super.visit(n, argu);
+        // super.visit(n, argu);
 
         System.out.println();
 
@@ -100,7 +113,8 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     * f1 -> Identifier()
     * f2 -> ";"
     */
-   public String visit(VarDeclaration n, Void argu) throws Exception {
+    @Override
+    public String visit(VarDeclaration n, Void argu) throws Exception {
         String _ret=null;
         String type = n.f0.accept(this, argu);
         String var = n.f1.accept(this, argu);
@@ -158,6 +172,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     * f0 -> ","
     * f1 -> FormalParameter()
     */
+    @Override
     public String visit(FormalParameterTerm n, Void argu) throws Exception {
         return n.f1.accept(this, argu);
     }
@@ -217,6 +232,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> ( Statement() )* 
      * f2 -> "}" 
      * */
+    @Override
     public String visit(Block n, Void argu){
         return "";
     }
@@ -227,6 +243,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f2 -> Expression() 
      * f3 -> ";"
      */
+    @Override
     public String visit(AssignmentStatement n , Void argu){
         return "";
     }
@@ -240,6 +257,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f5 -> Expression() 
      * f6 -> ";"
      */
+    @Override
     public String visit(ArrayAssignmentStatement n, Void argu){
         return "";
     }
@@ -253,6 +271,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f5 -> "else" 
      * f6 -> Statement()
      */
+    @Override
     public String visit(IfStatement n, Void argu){
         return "";
     }
@@ -264,6 +283,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f3 -> ")" 
      * f4 -> Statement()
      */
+    @Override
     public String visit(WhileStatement n, Void argu){
         return "";
     }    
@@ -275,6 +295,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f3 -> ")" 
      * f4 -> ";"
      */
+    @Override
     public String visit(PrintStatement n, Void argu){
         return "";
     }
@@ -285,6 +306,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> "&&" 
      * f2 -> Clause()
      */
+    @Override
     public String visit(AndExpression n, Void argu){
         return "";
     }
@@ -294,6 +316,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> "<" 
      * f2 -> PrimaryExpression()
      */
+    @Override
     public String visit(CompareExpression n, Void argu){
         return "";
     }
@@ -303,6 +326,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> "+" 
      * f2 -> PrimaryExpression()
      */
+    @Override
     public String visit(PlusExpression n, Void argu){
         return "";
     }
@@ -312,6 +336,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> "-" 
      * f2 -> PrimaryExpression()
      */
+    @Override
     public String visit(MinusExpression n, Void argu){
         return "";
     }
@@ -321,6 +346,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> "*" 
      * f2 -> PrimaryExpression()
      */
+    @Override
     public String visit(TimesExpression n, Void argu){
         return "";
     }
@@ -331,6 +357,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f2 -> PrimaryExpression() 
      * f3 -> "]"
      */
+    @Override
     public String visit(ArrayLookup n, Void argu){
         return "";
     }
@@ -341,6 +368,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> "." 
      * f2 -> "length"
      */
+    @Override
     public String visit(ArrayLength n, Void argu){
         return "";
     }
@@ -353,6 +381,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f4 -> ( ExpressionList() )? 
      * f5 -> ")"
      */
+    @Override
     public String visit(MessageSend n, Void argu){
         return "";
     }
@@ -361,6 +390,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f0 -> Expression() 
      * f1 -> ExpressionTail()
      */
+    @Override
     public String visit(ExpressionList n, Void argu){
         return "";
     }
@@ -368,6 +398,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     /**
      * f0 -> ( ExpressionTerm() )
      */
+    @Override
     public String visit(ExpressionTail n, Void argu){
         return "";
     }
@@ -376,6 +407,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f0 -> "," 
      * f1 -> Expression()
      */
+    @Override
     public String visit(ExpressionTerm n, Void argu){
         return "";
     }
@@ -383,6 +415,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     /**
      * f0 -> <INTEGER_LITERAL>
     */
+    @Override
     public String visit(IntegerLiteral n, Void argu){
         return "";
     }
@@ -390,6 +423,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     /**
      * f0 -> "true"
     */
+    @Override
     public String visit(TrueLiteral n, Void argu){
         return "";
     }
@@ -397,6 +431,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     /**
      * f0 -> "false"
     */
+    @Override
     public String visit(FalseLiteral n, Void argu){
         return "";
     }
@@ -404,6 +439,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     /**
      * f0 -> "this"
     */
+    @Override
     public String visit(ThisExpression n, Void argu){
         return "";
     }
@@ -415,6 +451,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f3 -> Expression() 
      * f4 -> "]"
     */
+    @Override
     public String visit(ArrayAllocationExpression n, Void argu){
         return "";
     }
@@ -425,6 +462,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f2 -> "(" 
      * f3 -> ")"
     */
+    @Override
     public String visit(AllocationExpression n, Void argu){
         return "";
     }
@@ -434,6 +472,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f0 -> "!" 
      * f1 -> Clause()
     */
+    @Override
     public String visit(NotExpression n, Void argu){
         return "";
     }
@@ -443,6 +482,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f1 -> Expression() 
      * f2 -> ")"
     */
+    @Override
     public String visit(BracketExpression n, Void argu){
         return "";
     }
