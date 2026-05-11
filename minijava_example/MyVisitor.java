@@ -210,23 +210,7 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     }
 
 
-
-
-    /**
-     * f0 -> ArrayType | BooleanType | IntegerType | Identifier
-    */
-    public String visit(Type n, Void argu){
-        return "";
-    }
-
-    /**
-    * f0 -> Block() | AssignmentStatement() | 
-    *  ArrayAssignmentStatement() | IfStatement() | 
-    *  WhileStatement() | PrintStatement() 
-    * */
-    public String visit(Statement n, Void argu){
-        return "";
-    }
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * f0 -> "{" 
@@ -295,15 +279,6 @@ class MyVisitor extends GJDepthFirst<String, Void>{
         return "";
     }
 
-
-    /**
-     *  f0 -> AndExpression() | CompareExpression() 
-     * | PlusExpression() | MinusExpression() | TimesExpression() 
-     * | ArrayLookup() | ArrayLength() | MessageSend() | Clause()
-     */
-    public String visit(Expression n, Void argu){
-        return "";
-    }
 
     /**
      * f0 -> Clause() 
@@ -406,16 +381,6 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     }
 
     /**
-     * f0 -> IntegerLiteral() | TrueLiteral() 
-     * | FalseLiteral() | Identifier() 
-     * | ThisExpression() | ArrayAllocationExpression() 
-     * | AllocationExpression() | BracketExpression()
-    */
-    public String visit(PrimaryExpression n, Void argu){
-        return "";
-    }
-
-    /**
      * f0 -> <INTEGER_LITERAL>
     */
     public String visit(IntegerLiteral n, Void argu){
@@ -440,14 +405,6 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      * f0 -> "this"
     */
     public String visit(ThisExpression n, Void argu){
-        return "";
-    }
-
-    /**
-     * f0 -> BooleanArrayAllocationExpression() 
-     * | IntegerArrayAllocationExpression()
-    */
-    public String visit(ArrayAllocationExpression n, Void argu){
         return "";
     }
 
