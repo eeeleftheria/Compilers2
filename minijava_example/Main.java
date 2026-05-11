@@ -4,13 +4,13 @@ import java.io.IOException;
 import syntaxtree.*;
 
 public class Main {
+
+    // args[0] = first argument (not like in c)
     public static void main(String[] args) throws Exception {
-        if(args.length != 1){
-            System.err.println("Usage: java Main <inputFile>");
+        if(args.length < 1){
+            System.err.println("Usage: java Main [file1] [file2] ... [fileN]");
             System.exit(1);
         }
-
-
 
         FileInputStream fis = null;
         try{

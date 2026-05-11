@@ -3,6 +3,8 @@ import visitor.*;
 
 
 class MyVisitor extends GJDepthFirst<String, Void>{
+   
+   
     /**
      * f0 -> "class"
      * f1 -> Identifier()
@@ -200,10 +202,281 @@ class MyVisitor extends GJDepthFirst<String, Void>{
     }
 
     /**
-    * f0 -> <IDENTIFIER>
+     * f0 -> <IDENTIFIER>
     */
-    @Override
-    public String visit(Identifier n, Void argu) {
-        return n.f0.toString();
+   @Override
+   public String visit(Identifier n, Void argu) {
+       return n.f0.toString();
     }
+
+
+
+
+    /**
+     * f0 -> ArrayType | BooleanType | IntegerType | Identifier
+    */
+    public String visit(Type n, Void argu){
+        return "";
+    }
+
+    /**
+    * f0 -> Block() | AssignmentStatement() | 
+    *  ArrayAssignmentStatement() | IfStatement() | 
+    *  WhileStatement() | PrintStatement() 
+    * */
+    public String visit(Statement n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "{" 
+     * f1 -> ( Statement() )* 
+     * f2 -> "}" 
+     * */
+    public String visit(Block n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> Identifier() 
+     * f1 -> "=" 
+     * f2 -> Expression() 
+     * f3 -> ";"
+     */
+    public String visit(AssignmentStatement n , Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> Identifier() 
+     * f1 -> "[" 
+     * f2 -> Expression() 
+     * f3 -> "]" 
+     * f4 -> "=" 
+     * f5 -> Expression() 
+     * f6 -> ";"
+     */
+    public String visit(ArrayAssignmentStatement n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "if" 
+     * f1 -> "(" 
+     * f2 -> Expression() 
+     * f3 -> ")" 
+     * f4 -> Statement() 
+     * f5 -> "else" 
+     * f6 -> Statement()
+     */
+    public String visit(IfStatement n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "while" 
+     * f1 -> "(" 
+     * f2 -> Expression() 
+     * f3 -> ")" 
+     * f4 -> Statement()
+     */
+    public String visit(WhileStatement n, Void argu){
+        return "";
+    }    
+
+    /**
+     * f0 -> "System.out.println" 
+     * f1 -> "(" 
+     * f2 -> Expression() 
+     * f3 -> ")" 
+     * f4 -> ";"
+     */
+    public String visit(PrintStatement n, Void argu){
+        return "";
+    }
+
+
+    /**
+     *  f0 -> AndExpression() | CompareExpression() 
+     * | PlusExpression() | MinusExpression() | TimesExpression() 
+     * | ArrayLookup() | ArrayLength() | MessageSend() | Clause()
+     */
+    public String visit(Expression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> Clause() 
+     * f1 -> "&&" 
+     * f2 -> Clause()
+     */
+    public String visit(AndExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "<" 
+     * f2 -> PrimaryExpression()
+     */
+    public String visit(CompareExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "+" 
+     * f2 -> PrimaryExpression()
+     */
+    public String visit(PlusExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "-" 
+     * f2 -> PrimaryExpression()
+     */
+    public String visit(MinusExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "*" 
+     * f2 -> PrimaryExpression()
+     */
+    public String visit(TimesExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "[" 
+     * f2 -> PrimaryExpression() 
+     * f3 -> "]"
+     */
+    public String visit(ArrayLookup n, Void argu){
+        return "";
+    }
+    
+    
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "." 
+     * f2 -> "length"
+     */
+    public String visit(ArrayLength n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> PrimaryExpression() 
+     * f1 -> "." 
+     * f2 -> Identifier() 
+     * f3 -> "(" 
+     * f4 -> ( ExpressionList() )? 
+     * f5 -> ")"
+     */
+    public String visit(MessageSend n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> Expression() 
+     * f1 -> ExpressionTail()
+     */
+    public String visit(ExpressionList n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> ( ExpressionTerm() )
+     */
+    public String visit(ExpressionTail n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "," 
+     * f1 -> Expression()
+     */
+    public String visit(ExpressionTerm n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> IntegerLiteral() | TrueLiteral() 
+     * | FalseLiteral() | Identifier() 
+     * | ThisExpression() | ArrayAllocationExpression() 
+     * | AllocationExpression() | BracketExpression()
+    */
+    public String visit(PrimaryExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> <INTEGER_LITERAL>
+    */
+    public String visit(IntegerLiteral n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "true"
+    */
+    public String visit(TrueLiteral n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "false"
+    */
+    public String visit(FalseLiteral n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "this"
+    */
+    public String visit(ThisExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> BooleanArrayAllocationExpression() 
+     * | IntegerArrayAllocationExpression()
+    */
+    public String visit(ArrayAllocationExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "new" 
+     * f1 -> Identifier() 
+     * f2 -> "(" 
+     * f3 -> ")"
+    */
+    public String visit(AllocationExpression n, Void argu){
+        return "";
+    }
+
+
+    /**
+     * f0 -> "!" 
+     * f1 -> Clause()
+    */
+    public String visit(NotExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "(" 
+     * f1 -> Expression() 
+     * f2 -> ")"
+    */
+    public String visit(BracketExpression n, Void argu){
+        return "";
+    }
+
 }
