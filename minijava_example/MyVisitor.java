@@ -410,6 +410,17 @@ class MyVisitor extends GJDepthFirst<String, Void>{
 
     /**
      * f0 -> "new" 
+     * f1 -> "int" 
+     * f2 -> "[" 
+     * f3 -> Expression() 
+     * f4 -> "]"
+    */
+    public String visit(ArrayAllocationExpression n, Void argu){
+        return "";
+    }
+
+    /**
+     * f0 -> "new" 
      * f1 -> Identifier() 
      * f2 -> "(" 
      * f3 -> ")"
