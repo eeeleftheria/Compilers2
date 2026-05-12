@@ -66,4 +66,16 @@ public class MethodSymbol{
 
         localFields.add(fs);
     }
+
+    public void printParameterTypes(){
+        for(String arg: parametersTypes){
+            System.out.println(arg);
+        }
+    }
+
+    public void printParameters(){
+        for(String arg: parametersList){
+            System.out.println(arg);
+        }
+    }
 }

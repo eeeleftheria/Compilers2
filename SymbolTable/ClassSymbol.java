@@ -1,6 +1,7 @@
 
 package SymbolTable;
 
+import java.lang.reflect.Field;
 import java.util.Vector;
 
 public class ClassSymbol{
@@ -42,6 +43,28 @@ public class ClassSymbol{
 
     public void setName(String n){
         name = n;
+    }
+
+    public void printClassSymbol(){
+        System.out.println("Fields: ");
+
+        for(FieldSymbol item: fields){
+            System.out.println(item.getName() + " " + item.getType());
+        }
+
+        System.out.println("Methods: ");
+
+        for(MethodSymbol item: methods){
+            System.out.println(item.getName() + ":");
+           
+            System.out.println("Arg Types: ");
+            item.printParameterTypes();
+
+            System.out.println("Arg given: ");
+            item.printParameters();
+
+        }
+
     }
 
 }

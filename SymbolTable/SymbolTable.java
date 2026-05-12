@@ -29,6 +29,18 @@ public class SymbolTable{
         symbolTable.get(className).addMethod(className, returnType);
     }
 
+    public void printSymbolTable(){
+        for(String key: symbolTable.keySet()){
+
+            ClassSymbol temp = symbolTable.get(key);
+
+            System.out.println("Class: " + key);
+            temp.printClassSymbol();
+
+            System.out.println("");
+        }
+    }
+
 
 
 }

@@ -2,6 +2,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import syntaxtree.*;
+import SymbolTable.*;
 
 public class Main {
 
@@ -21,7 +22,9 @@ public class Main {
 
             System.err.println("Program parsed successfully.");
 
-            MyVisitor eval = new MyVisitor();
+            SymbolTable table = new SymbolTable();
+
+            MyVisitor eval = new MyVisitor(table);
             root.accept(eval, null);
         }
         catch(ParseException ex){
