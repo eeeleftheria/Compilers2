@@ -141,6 +141,8 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      */
     @Override
     public String visit(MethodDeclaration n, Void argu) throws Exception {
+
+        // if the method has non-void parameters: accept and visit them 
         String argumentList = n.f4.present() ? n.f4.accept(this, null) : "";
 
         String myType = n.f1.accept(this, null);
@@ -149,7 +151,6 @@ class MyVisitor extends GJDepthFirst<String, Void>{
         System.out.println("Method: " + myType + " " + myName + " (" + argumentList + ")");
         System.out.println("Local vars:");
 
-        super.visit(n, argu);
         return null;
     }
 
@@ -159,32 +160,14 @@ class MyVisitor extends GJDepthFirst<String, Void>{
      */
     @Override
     public String visit(FormalParameterList n, Void argu) throws Exception {
+        
+        // this visits only the first parameter
         String ret = n.f0.accept(this, null);
 
+        // if there is more than one parameter: visit the Tail
+        // and add the result to the final string
         if (n.f1 != null) {
             ret += n.f1.accept(this, null);
-        }
-
-        return ret;
-    }
-
-    /**
-    * f0 -> ","
-    * f1 -> FormalParameter()
-    */
-    @Override
-    public String visit(FormalParameterTerm n, Void argu) throws Exception {
-        return n.f1.accept(this, argu);
-    }
-
-    /**
-    * f0 -> ( FormalParameterTerm() )*
-    */
-    @Override
-    public String visit(FormalParameterTail n, Void argu) throws Exception {
-        String ret = "";
-        for ( Node node: n.f0.nodes) {
-            ret += ", " + node.accept(this, null);
         }
 
         return ret;
@@ -200,6 +183,34 @@ class MyVisitor extends GJDepthFirst<String, Void>{
         String name = n.f1.accept(this, null);
         return type + " " + name;
     }
+    
+    /**
+    * f0 -> ( FormalParameterTerm() )*
+    */
+    @Override
+    public String visit(FormalParameterTail n, Void argu) throws Exception {
+        String ret = "";
+
+        // each node is of type FormalParameterTerm
+        for ( Node node: n.f0.nodes) {
+            ret += ", " + node.accept(this, null);
+        }
+ 
+        return ret;
+    }
+
+    /**
+    * f0 -> ","
+    * f1 -> FormalParameter()
+    */
+
+    // this visit method is called for every parameter 
+    // of a method after the first one
+    @Override
+    public String visit(FormalParameterTerm n, Void argu) throws Exception {
+        return n.f1.accept(this, argu);
+    }
+
 
     @Override
     public String visit(ArrayType n, Void argu) {
