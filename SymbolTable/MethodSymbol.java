@@ -8,11 +8,13 @@ public class MethodSymbol{
     private int numOfArgs; // number of arguments   
     private Vector<String> parametersTypes; // type of each parameter
     private Vector<String> parametersList; // names of the parameters
+    private Vector<FieldSymbol> localFields; // local fields of method
 
     public MethodSymbol(){
 
         parametersTypes = new Vector<>();
         parametersList = new Vector<>();
+        localFields = new Vector<>();
     }
 
     public String getName(){
@@ -53,5 +55,13 @@ public class MethodSymbol{
 
     public void setParAtPos(String par, int pos){
         parametersList.add(pos, par);
+    }
+
+    public void addLocalField(String name, String type){
+        FieldSymbol fs = new FieldSymbol();
+        fs.setName(name);
+        fs.setType(type);
+
+        localFields.add(fs);
     }
 }

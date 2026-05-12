@@ -3,6 +3,7 @@ import java.util.Vector;
 
 public class ClassSymbol{
     
+    private String name;
     private String parentClass;
 
     private Vector<FieldSymbol> fields; // vector with all the fields of a specific class
@@ -35,6 +36,10 @@ public class ClassSymbol{
         ms.setReturnType(returnType);
 
         methods.add(ms);
+    }
+
+    public void setName(String n){
+        name = n;
     }
 
 }
