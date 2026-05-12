@@ -1,3 +1,5 @@
+package SymbolTable;
+
 import java.util.HashMap;
 
 public class SymbolTable{

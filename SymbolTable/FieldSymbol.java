@@ -1,4 +1,6 @@
 
+package SymbolTable;
+
 public class FieldSymbol{
     
     private String type;

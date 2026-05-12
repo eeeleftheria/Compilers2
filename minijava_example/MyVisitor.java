@@ -1,5 +1,6 @@
 import syntaxtree.*;
 import visitor.*;
+import SymbolTable.*;
 
 
 class MyVisitor extends GJDepthFirst<String, Void>{
