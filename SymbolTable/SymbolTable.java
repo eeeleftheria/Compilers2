@@ -26,7 +26,11 @@ public class SymbolTable{
 
     // inserts a method to the class with name className
     public void addClassMethod(String className, String method, String returnType){
-        symbolTable.get(className).addMethod(className, returnType);
+        symbolTable.get(className).addMethod(method, returnType);
+    }
+
+    public void addMethodParam(String className, String method, String name, String type){
+        symbolTable.get(className).addParam(method, type, name);
     }
 
     public void printSymbolTable(){
@@ -35,6 +39,7 @@ public class SymbolTable{
             ClassSymbol temp = symbolTable.get(key);
 
             System.out.println("Class: " + key);
+            System.out.println("--------------");
             temp.printClassSymbol();
 
             System.out.println("");

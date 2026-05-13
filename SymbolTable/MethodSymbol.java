@@ -6,8 +6,7 @@ import java.util.Vector;
 public class MethodSymbol{
     
     private String name;
-    private String returnType;
-    private int numOfArgs; // number of arguments   
+    private String returnType; 
     private Vector<String> parametersTypes; // type of each parameter
     private Vector<String> parametersList; // names of the parameters
     private Vector<FieldSymbol> localFields; // local fields of method
@@ -36,27 +35,13 @@ public class MethodSymbol{
     }
 
     public int getNumOfArgs(){
-        return numOfArgs;
+        return parametersList.size();
     }
 
-    public void setNumOfArgs(int n){
-        numOfArgs = n;
-    }
-
-    public String getTypeOfParAtPos(int i){
-        return parametersTypes.get(i);
-    }
-
-    public void setTypeOfParAtPos(String type, int pos){
-        parametersTypes.add(pos, type);
-    }
-
-    public String getParAtPos(int i){
-        return parametersList.get(i);
-    }
-
-    public void setParAtPos(String par, int pos){
-        parametersList.add(pos, par);
+    // adds a new parameters with name par and type 
+    public void addParam(String par, String type){
+        parametersList.add(par);
+        parametersTypes.add(type);
     }
 
     public void addLocalField(String name, String type){
@@ -67,15 +52,25 @@ public class MethodSymbol{
         localFields.add(fs);
     }
 
-    public void printParameterTypes(){
-        for(String arg: parametersTypes){
-            System.out.println(arg);
+    // returns a string of format: (type1 par1, type2 par2 ...)
+    public String getParametersString(){
+
+        String res = "(";
+
+        for(int i = 0; i < parametersList.size(); i++){
+            String par = parametersList.get(i);
+            String type = parametersTypes.get(i);
+
+            res += (type + " " + par);
+            
+            if(i < parametersList.size() - 1){
+                res += ", ";
+            }
         }
+
+        res += ")";
+        return res;
     }
 
-    public void printParameters(){
-        for(String arg: parametersList){
-            System.out.println(arg);
-        }
-    }
+
 }

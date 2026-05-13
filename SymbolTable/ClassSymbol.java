@@ -45,24 +45,41 @@ public class ClassSymbol{
         name = n;
     }
 
+    // returns true if the methods was found and the parameter was inserted successfully
+    public boolean addParam(String method, String type, String name){
+       
+        MethodSymbol foundMethod = getMethod(method);
+       
+        if (foundMethod != null) {
+            foundMethod.addParam(name, type);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // returns MethodSymbol with name methodName if found, else null
+    public MethodSymbol getMethod(String methodName){
+        for(MethodSymbol m : methods){
+            if(m.getName().equals(methodName)){
+                return m;
+            }
+        }
+        return null;
+    }
+
     public void printClassSymbol(){
         System.out.println("Fields: ");
 
         for(FieldSymbol item: fields){
-            System.out.println(item.getName() + " " + item.getType());
+            System.out.println("  "+ item.getName() + " " + item.getType());
         }
 
         System.out.println("Methods: ");
 
         for(MethodSymbol item: methods){
-            System.out.println(item.getName() + ":");
+            System.out.println("  " + item.getReturnType() + " " + item.getName() + item.getParametersString());
            
-            System.out.println("Arg Types: ");
-            item.printParameterTypes();
-
-            System.out.println("Arg given: ");
-            item.printParameters();
-
         }
 
     }
