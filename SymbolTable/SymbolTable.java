@@ -29,8 +29,13 @@ public class SymbolTable{
         symbolTable.get(className).addMethod(method, returnType);
     }
 
+    // adds a parameter to the method symbol
     public void addMethodParam(String className, String method, String name, String type){
         symbolTable.get(className).addParam(method, type, name);
+    }
+    // adds a local field to the method symbol
+    public void addMethodLocal(String className, String method, String name, String type){
+        symbolTable.get(className).addLocalField(method, type, name);
     }
 
     public void printSymbolTable(){

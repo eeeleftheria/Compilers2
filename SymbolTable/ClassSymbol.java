@@ -50,10 +50,23 @@ public class ClassSymbol{
        
         MethodSymbol foundMethod = getMethod(method);
        
-        if (foundMethod != null) {
+        if (foundMethod != null){
             foundMethod.addParam(name, type);
             return true;
-        } else {
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean addLocalField(String method, String type, String name){
+        MethodSymbol foundMethod = getMethod(method);
+       
+        if (foundMethod != null){
+            foundMethod.addLocalField(name, type);
+            return true;
+        } 
+        else{
             return false;
         }
     }
@@ -71,15 +84,23 @@ public class ClassSymbol{
     public void printClassSymbol(){
         System.out.println("Fields: ");
 
+        // print class fields
         for(FieldSymbol item: fields){
             System.out.println("  "+ item.getName() + " " + item.getType());
         }
 
         System.out.println("Methods: ");
 
+        // print class methods and their parameters
         for(MethodSymbol item: methods){
             System.out.println("  " + item.getReturnType() + " " + item.getName() + item.getParametersString());
-           
+
+            System.out.println("    Local fields:");
+
+            // print the local fields of each method
+            for(FieldSymbol f: item.getLocals()){
+                System.out.println("       " + f.getName() + " " + f.getType());
+            }
         }
 
     }

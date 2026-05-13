@@ -133,7 +133,14 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
   
         // super.visit(n, argu);
         
-        symboltable.addClassField(className, var, type);
+        // in this case the field comes from a class decl
+        if(args.inMethod() == false){
+            symboltable.addClassField(className, var, type);
+        }
+        // in this case the field comes from a method decl
+        else{
+            symboltable.addMethodLocal(className, args.getMethodName(), var, type);
+        }
 
         return _ret;
     }
@@ -162,9 +169,13 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
         symboltable.addClassMethod(argu.getClassName(), myName, myType);
         
         VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType);
+        args.setInMethod(); // set flag to true, since we are inside of a method decl
 
         // if the method has non-void parameters: accept and visit them 
         String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
+
+        // visit the local fields
+        n.f7.accept(this, args);
 
         return null;
     }

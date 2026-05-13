@@ -18,6 +18,8 @@ public class MethodSymbol{
         localFields = new Vector<>();
     }
 
+    //#### GETTERS AND SETTERS ####//
+
     public String getName(){
         return name;
     }
@@ -37,6 +39,16 @@ public class MethodSymbol{
     public int getNumOfArgs(){
         return parametersList.size();
     }
+    
+    public Vector<FieldSymbol> getLocals(){
+
+        // !! return copy of vector (objects' value is copied to a reference in java)
+        return new Vector<FieldSymbol>(localFields);
+    }
+
+
+    ////////////////////////////////////
+
 
     // adds a new parameters with name par and type 
     public void addParam(String par, String type){
