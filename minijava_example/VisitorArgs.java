@@ -7,7 +7,9 @@ public class VisitorArgs {
     // field of a method. This way we know if have reached VarDecleration from a 
     // ClassDecleration or a MethodDecleration
 
-    public VisitorArgs(String classn, String method, String field, String type){
+    private String parameters; // a string with the parameters of a method in format: type var type var ...
+
+    public VisitorArgs(String classn, String method, String field, String type, String pars){
         this.className = classn;
         this.methodName = method;
         this.fieldName = field;
@@ -37,6 +39,16 @@ public class VisitorArgs {
     // resets flag back to false
     public void resetInMethod(){
         inMethod = false;
+    }
+
+    // returns all paraneters of a method as one string
+    public String getParameters(){
+        return parameters;
+    }
+
+    // sets the parameters of a method as a string of format: type var type var
+    public void setParameters(String pars){
+        parameters = pars;
     }
 
 

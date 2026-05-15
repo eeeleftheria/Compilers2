@@ -76,7 +76,7 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
         String classname = n.f1.accept(this, argu);
         symboltable.addClass(classname);
 
-        VisitorArgs args = new VisitorArgs(classname, "-", "-", "-");
+        VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
 
         n.f2.accept(this, args);
         n.f3.accept(this, args);
@@ -104,7 +104,7 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
         symboltable.addClass(classname);
         
         
-        VisitorArgs args = new VisitorArgs(classname, "-", "-", "-");
+        VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
         
         n.f2.accept(this, args);
        
@@ -143,7 +143,7 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
         }
         // in this case the field comes from a method decl
         else{
-            symboltable.addMethodLocal(className, args.getMethodName(), var, type);
+            symboltable.addMethodLocal(className, args.getMethodName(), var, type, args.getParameters());
         }
 
         return _ret;
@@ -172,11 +172,13 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         symboltable.addClassMethod(argu.getClassName(), myName, myType);
         
-        VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType);
+        VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
         args.setInMethod(); // set flag to true, since we are inside of a method decl
 
         // if the method has non-void parameters: accept and visit them 
         String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
+
+        args.setParameters(argumentList);
 
         // visit the local fields
         n.f7.accept(this, args);
@@ -193,9 +195,6 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         // this visits only the first parameter
         String ret = n.f0.accept(this, args); // ret consists of type + name of first parameter
-        String[] firstPar = ret.split(" ");
-
-        symboltable.addMethodParam(args.getClassName(), args.getMethodName(), firstPar[1], firstPar[0]);
 
         // if there is more than one parameter: visit the Tail
         // and add the result to the final string
@@ -203,12 +202,8 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
             String tempRes = n.f1.accept(this, args); // tempRes stores remaining parameters: "type name type name ..."
             ret += tempRes;
 
-            String[] parts = tempRes.trim().split(" ");
-            
-            // Process remaining parameters in pairs (type, name)
-            for (int i = 0; i < parts.length - 1; i += 2) {
-                symboltable.addMethodParam(args.getClassName(), args.getMethodName(), parts[i+1], parts[i]);
-            }
+            symboltable.addAllParameters(args.getClassName(), args.getMethodName(), ret);
+
         }
 
         return ret;

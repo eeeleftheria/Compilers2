@@ -51,10 +51,11 @@ public class ClassSymbol{
         name = n;
     }
 
-    // returns true if the methods was found and the parameter was inserted successfully
-    public boolean addParam(String method, String type, String name){
+    // returns true if the methods was found and the parameter was inserted successfully.
+    // pars corresponds to the current parameters that have been already added to the Symbol Table
+    private boolean addParam(String method, String type, String name, String pars){
        
-        MethodSymbol foundMethod = getMethod(method);
+        MethodSymbol foundMethod = getMethod(method, pars);
        
         if (foundMethod != null){
             foundMethod.addParam(name, type);
@@ -65,8 +66,33 @@ public class ClassSymbol{
         }
     }
 
-    public boolean addLocalField(String method, String type, String name){
-        MethodSymbol foundMethod = getMethod(method);
+    // Given a method name and a string with all of its parameters it adds them one by one to the ST.
+    // Returns true if the parameters were added successfully, else false
+    public boolean addAllParameters(String method, String pars){
+        
+        // we need to search for the method with the corresponding name
+        // and which has no assigned parameters yet.
+        MethodSymbol foundMethod = getMethodByName(method);
+        
+        if (foundMethod != null){
+
+            // split the string 
+            String[] parts = pars.trim().split(" "); // this contains [type1, var1, type2, var2, ...]
+           
+            for(int i = 0; i < parts.length - 1; i += 2){
+
+                foundMethod.addParam(parts[i+1], parts[i]);
+            }
+
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean addLocalField(String method, String type, String name, String pars){
+        MethodSymbol foundMethod = getMethod(method, pars);
        
         if (foundMethod != null){
             foundMethod.addLocalField(name, type);
@@ -77,11 +103,38 @@ public class ClassSymbol{
         }
     }
 
-    // returns MethodSymbol with name methodName if found, else null
-    public MethodSymbol getMethod(String methodName){
+    // searches for the specific method with the specific parameters (format: type par type par ...)
+    // in case of overloading and returns the methodSymbol if found, else null
+    public MethodSymbol getMethod(String methodName, String parameters){
+      
         for(MethodSymbol m : methods){
             if(m.getName().equals(methodName)){
-                return m;
+                
+                String pars = m.getParametersString2();
+
+                // if a method with the exact same parameters was found, return it
+                if(pars.equals(parameters)){
+                    return m;
+                }
+                
+            }
+        }
+        return null;
+    }
+
+    // searches for the method with the given name and with no parameters yet
+    public MethodSymbol getMethodByName(String methodName){
+    
+        for(MethodSymbol m : methods){
+            if(m.getName().equals(methodName)){
+                
+                String pars = m.getParametersString2();
+
+                // return the method with no assigned parameters
+                if(pars.isEmpty()){
+                    return m;
+                }
+                
             }
         }
         return null;

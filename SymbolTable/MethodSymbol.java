@@ -81,5 +81,24 @@ public class MethodSymbol{
         return res;
     }
 
+    // returns a string of format: type1 par1 type2 par2 ...
+    public String getParametersString2(){
+
+        String res = "";
+
+        for(int i = 0; i < parametersList.size(); i++){
+            String par = parametersList.get(i);
+            String type = parametersTypes.get(i);
+
+            res += (type + " " + par);
+            
+            if(i < parametersList.size() - 1){
+                res += " ";
+            }
+        }
+
+        return res;
+    }
+
 
 }
