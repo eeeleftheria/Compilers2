@@ -24,7 +24,7 @@ public class Main {
 
             SymbolTable table = new SymbolTable();
 
-            MyVisitor eval = new MyVisitor(table);
+            SymbolTableVisitor eval = new SymbolTableVisitor(table);
             root.accept(eval, null);
         }
         catch(ParseException ex){
