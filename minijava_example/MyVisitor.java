@@ -22,8 +22,7 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
     public String visit(Goal n, VisitorArgs argu) throws Exception{
         n.f0.accept(this, null); // Goal.MainClass.accept(MyVisitor) -> MyVisitor.visit(MainClass)
         n.f1.accept(this, null);   
-        
-        System.out.println("========SYMBOL TABLE========");
+    
         symboltable.printSymbolTable();
 
         return "";
@@ -103,11 +102,16 @@ class MyVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         String classname = n.f1.accept(this, null);
         symboltable.addClass(classname);
-
+        
+        
         VisitorArgs args = new VisitorArgs(classname, "-", "-", "-");
-
+        
         n.f2.accept(this, args);
-        n.f3.accept(this, args);
+       
+        // store parent class in symbol table
+        String parent = n.f3.accept(this, args); 
+        symboltable.addParentClass(classname, parent);
+
         n.f4.accept(this, args);
         n.f5.accept(this, args);
         n.f6.accept(this, args);

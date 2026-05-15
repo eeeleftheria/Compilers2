@@ -10,13 +10,18 @@ public class SymbolTable{
         symbolTable = new HashMap<>(100);
     }
 
-    // inserts a new class to the symbol table
+    // inserts a new class to the symbol table, along with its parent if it is a subclass
     public void addClass(String name){
 
         ClassSymbol cs = new ClassSymbol();
         cs.setName(name);
 
         symbolTable.put(name, cs);
+    }
+
+    // if the class extends another one, store its parent
+    public void addParentClass(String className, String parent){
+        symbolTable.get(className).setParentClass(parent);
     }
 
     // inserts a field to the class with name className
@@ -39,11 +44,15 @@ public class SymbolTable{
     }
 
     public void printSymbolTable(){
+        
+        System.out.println("========SYMBOL TABLE========");
+        
         for(String key: symbolTable.keySet()){
 
             ClassSymbol temp = symbolTable.get(key);
+            String parent = temp.getParentClass();
 
-            System.out.println("Class: " + key);
+            System.out.println("Class: " + key + " " + (parent.isEmpty() ? "" : "extends ") + parent);
             System.out.println("--------------");
             temp.printClassSymbol();
 

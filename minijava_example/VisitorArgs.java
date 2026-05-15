@@ -8,9 +8,9 @@ public class VisitorArgs {
     // ClassDecleration or a MethodDecleration
 
     public VisitorArgs(String classn, String method, String field, String type){
-        className = classn;
-        methodName = method;
-        fieldName = field;
+        this.className = classn;
+        this.methodName = method;
+        this.fieldName = field;
         this.type = type;
         this.inMethod = false;
     }

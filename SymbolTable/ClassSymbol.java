@@ -17,10 +17,16 @@ public class ClassSymbol{
         // default initial capacity is 10       
         fields = new Vector<>(); 
         methods = new Vector<>(); 
+        name = "";
+        parentClass = "";
     }
 
     public void setParentClass(String parent){
         parentClass = parent;
+    }
+
+    public String getParentClass(){
+        return parentClass;
     }
 
     public void addField(String name, String type){
