@@ -123,6 +123,43 @@ public class ClassSymbol{
         return null;
     }
 
+    // searches for the specific method with the specific parameter types(format: type1 type2 ...)
+    // in case of overloading and returns the methodSymbol if found, else null
+    public MethodSymbol getMethodWithTypes(String methodName, String parameters){
+      
+        for(MethodSymbol m : methods){
+            if(m.getName().equals(methodName)){
+                
+                String pars = m.getParametersString2();
+                String[] parts_original = pars.split(" ");
+                String[] parts_tocheck = parameters.split(" ");
+                
+                // if the number of types are not equal for both then 
+                // the method is not the desired one
+                if(parts_original.length/2 != parts_tocheck.length){
+                    return null;
+                }
+                
+                // if a method with the exact same parameter types was found, return it
+                boolean equal = true;
+                for(int i = 0; i < parts_original.length; i=i+2){
+                   
+                   // all parameters have to have the same type
+                    if(!parts_original[i].equals(parts_tocheck[i])){
+                        equal = false;
+                        break;
+                    }
+                }
+
+                if(equal == true){
+                    return m;
+                }
+                
+            }
+        }
+        return null;
+    }
+
     // searches for the method with the given name and with no parameters yet
     public MethodSymbol getMethodByName(String methodName){
     
@@ -177,6 +214,14 @@ public class ClassSymbol{
         return null;
     }   
 
+    public String getTypeOfLocal(String var, String method, String args){
+        return getMethod(method, args).getTypeOfLocal(var);
+    }
+
+    public String getTypeOfParameter(String var, String method, String args){
+        return getMethod(method, args).getTypeOfParameter(var);
+    }
+
     public String getName(){
         return name;
     }
@@ -194,5 +239,25 @@ public class ClassSymbol{
         }
 
         return false;
+    }
+
+    public boolean containsMethodWithTypes(String methodn, String pars){
+
+        MethodSymbol m = getMethodWithTypes(methodn, pars);
+        if(m != null){
+            return true;
+        }
+
+        return false;
+    }
+
+    public String getReturnTypeOfMethod(String method, String pars){
+        
+        MethodSymbol m = getMethodWithTypes(method, pars);
+        if(m != null){
+            return m.getReturnType();
+        }
+
+        return null;
     }
 }

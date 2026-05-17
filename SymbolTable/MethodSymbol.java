@@ -103,7 +103,29 @@ public class MethodSymbol{
 
     // FUNCTIONS USED FOR TYPE CHECKING
 
+    // returns the type of a parameter
     public String getTypeOfField(String var){
+        
+        for(int i = 0; i < parametersList.size(); i++){
+            if(parametersList.get(i).equals(var)){
+                return parametersTypes.get(i);
+            }
+        }
+        return null;
+    }   
+
+    // returns the type of a local variable 
+    public String getTypeOfLocal(String var){
+        
+        for(FieldSymbol f: localFields){
+            if(var.equals(f.getName()))
+                return f.getType();
+        }
+        return null;
+    }   
+
+    // returns the type of a parameter 
+    public String getTypeOfParameter(String var){
         
         for(int i = 0; i < parametersList.size(); i++){
             if(parametersList.get(i).equals(var)){

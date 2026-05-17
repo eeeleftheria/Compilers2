@@ -200,8 +200,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(FormalParameter n, VisitorArgs argu) throws Exception{
         String type = n.f0.accept(this, null);
-        String name = n.f1.accept(this, null);
-        return type + " " + name;
+        String type2 = n.f1.accept(this, null);
+        return type2;
     }
     
     /**
@@ -254,11 +254,34 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
    public String visit(Identifier n, VisitorArgs argu) {
        String name = n.f0.toString();
        
-    //    String classn = argu.getClassName();
-    //    String type = symboltable.getTypeOfField(classn, name);
+        // in case of goal rule, argu is still null so we should
+        // return the name of the class
+       if(argu == null || argu.getClassName().isEmpty()){
+           return name;
+       }
+
+       // in any other case, the identifier comes from a vardecl, 
+       // a class decl or a methoddecl
+       String classn = argu.getClassName();
        
-       // Return the type if found, otherwise return the identifier name
-       return name;
+       // in case of a class field
+       String type = symboltable.getTypeOfField(classn, name);
+      
+      // in case of a method local 
+       if(type == null && argu.getMethodName() != null && !argu.getMethodName().isEmpty()){
+            type = symboltable.getTypeOfLocal(classn, name, argu.getMethodName(), argu.getParameters());
+       }
+       
+       // in case of a method parameter 
+       if(type == null && argu.getMethodName() != null && !argu.getMethodName().isEmpty() ){
+            type = symboltable.getTypeOfParameter(classn, name, argu.getMethodName(), argu.getParameters());
+       }
+
+       if(type == null)
+            return name;
+       
+       return type;
+       
     }
 
 
@@ -283,14 +306,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(AssignmentStatement n , VisitorArgs argu) throws Exception{
         
-        String lvalue = n.f0.accept(this, argu); // get variable name
-        String rvalue = n.f2.accept(this, argu); // get expression variable: will have to change later
-        
-        String ltype = symboltable.getTypeOfField(argu.getClassName(), lvalue);
-        String rtype = symboltable.getTypeOfField(argu.getClassName(), rvalue);
+        String ltype = n.f0.accept(this, argu); // get variable type
+        String rtype = n.f2.accept(this, argu); // get type of expression
         
         // check if rtype is subtype of ltype
-        if (!symboltable.isSubtype(ltype, rtype)) {
+        if (ltype != null && rtype != null && !symboltable.isSubtype(ltype, rtype)) {
             throw new Exception("Type error: cannot assign " + rtype + " to " + ltype);
         }
 
@@ -432,7 +452,32 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(MessageSend n, VisitorArgs argu) throws Exception{
-        return "";
+        String objectType = n.f0.accept(this, argu);  // type of object
+
+        VisitorArgs args = new VisitorArgs(argu.getClassName(), null, null, null, null);
+        String methodName = n.f2.accept(this, args);  // method name
+    
+        
+        // Check if it's a valid class type
+        if(!symboltable.isTypeClass(objectType)){
+
+            throw new Exception("MessageSend error: cannot call method on " + objectType);
+        }
+
+        // check if object class contains the specific method
+
+        // first we need to construct the string with the arguments of the function call
+        // ExpressionList returns string of format "type1 type2 type3 ..."
+        String typesStr = n.f4.accept(this, argu);
+
+        if(!symboltable.containsMethodWithTypes(objectType, methodName, typesStr)){
+            throw new Exception("MessageSend error: method " + methodName + " does not exist in class " + objectType);
+        }
+        
+        // TODO: Look up method in the class and return its return type
+        String retType = symboltable.getReturnTypeOfMethod(objectType, methodName, typesStr);
+        
+        return retType;
     }
 
     /**
@@ -440,8 +485,14 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      * f1 -> ExpressionTail()
      */
     @Override
+    // the only place we can have expression lists are in the message sends
+    // so we can return the string type(expr1) type(expr2) type(expr3) ...
     public String visit(ExpressionList n, VisitorArgs argu) throws Exception{
-        return "";
+        String type1 = n.f0.accept(this, argu);
+        String types = n.f1.accept(this, argu);
+
+        types = type1 + " " + types;
+        return types;
     }
 
     /**
@@ -449,7 +500,14 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ExpressionTail n, VisitorArgs argu) throws Exception{
-        return "";
+        String types = "";
+
+        // each node is of type ExpressionTerm
+        for ( Node node: n.f0.nodes) {
+            types += " " + node.accept(this, null);
+        }
+ 
+        return types;
     }
 
     /**
@@ -458,7 +516,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ExpressionTerm n, VisitorArgs argu) throws Exception{
-        return "";
+        
+        // expression() must return type
+        return n.f0.accept(this, null);
     }
 
     /**
@@ -466,7 +526,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(IntegerLiteral n, VisitorArgs argu) throws Exception{
-        return "";
+        return "int";
     }
 
     /**
@@ -474,7 +534,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(TrueLiteral n, VisitorArgs argu) throws Exception{
-        return "";
+        return "boolean";
     }
 
     /**
@@ -482,7 +542,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(FalseLiteral n, VisitorArgs argu) throws Exception{
-        return "";
+        return "boolean";
     }
 
     /**
@@ -490,7 +550,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(ThisExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "this";
     }
 
     /**
@@ -502,7 +562,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(ArrayAllocationExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "int[]";
     }
 
     /**
@@ -513,7 +573,13 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(AllocationExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        String classn = n.f1.accept(this, argu);
+        boolean res = symboltable.containsClass(classn);
+        if(res == true){
+            return classn;
+        }
+        else
+            throw new Exception("Allocation expression error: " + classn + " is not a class");
     }
 
 

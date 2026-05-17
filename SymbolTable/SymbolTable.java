@@ -67,6 +67,15 @@ public class SymbolTable{
         return symbolTable.get(className).getTypeOfField(var);
     }
 
+    public String getTypeOfLocal(String className, String var, String method, String args){
+        return symbolTable.get(className).getTypeOfLocal(method, var, args);
+    }
+
+    public String getTypeOfParameter(String classn, String var, String method, String args){
+        return symbolTable.get(classn).getTypeOfParameter(method, var, args);
+    }
+
+
     // returns true if type b is sybtype of a, else false
     public boolean isSubtype(String a, String b){
 
@@ -142,6 +151,15 @@ public class SymbolTable{
     public boolean containsMethod(String classn, String methodn, String pars){
 
         return symbolTable.get(classn).containsMethod(methodn, pars);
+    }
+
+    public boolean containsMethodWithTypes(String classn, String methodn, String pars){
+
+        return symbolTable.get(classn).containsMethodWithTypes(methodn, pars);
+    }
+
+    public String getReturnTypeOfMethod(String classn, String method, String pars){
+        return symbolTable.get(classn).getReturnTypeOfMethod(method, pars);
     }
 
 
