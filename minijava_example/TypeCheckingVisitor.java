@@ -132,10 +132,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         String className = args.getClassName();
         String type = n.f0.accept(this, args);
-        String var = n.f1.accept(this, args);
-  
-        // super.visit(n, argu);
-        
+        String var = n.f1.accept(this, null);  // we only need the name of the var
 
         return _ret;
     }
@@ -161,11 +158,12 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String myType = n.f1.accept(this, argu);
         String myName = n.f2.accept(this, argu);
 
-        
         VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
 
         // if the method has non-void parameters: accept and visit them 
         String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
+        
+        args.setParameters(argumentList);
 
         // visit the local fields
         n.f7.accept(this, args);
@@ -200,8 +198,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(FormalParameter n, VisitorArgs argu) throws Exception{
         String type = n.f0.accept(this, null);
-        String type2 = n.f1.accept(this, null);
-        return type2;
+        String name = n.f1.accept(this, null);
+        return type + " " + name;
     }
     
     /**
@@ -474,7 +472,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
             throw new Exception("MessageSend error: method " + methodName + " does not exist in class " + objectType);
         }
         
-        // TODO: Look up method in the class and return its return type
+        // the type of the messageSend result is the return type of the method
         String retType = symboltable.getReturnTypeOfMethod(objectType, methodName, typesStr);
         
         return retType;

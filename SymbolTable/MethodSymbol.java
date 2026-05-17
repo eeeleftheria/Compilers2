@@ -135,7 +135,7 @@ public class MethodSymbol{
         return null;
     }   
 
-    // returns true if the method contains a local field var
+    // returns true if the method contains a local field or a parameter with name var
     public boolean containsLocal(String var){
         
         for(int i = 0; i < parametersList.size(); i++){

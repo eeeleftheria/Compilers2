@@ -183,24 +183,20 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         String myType = n.f1.accept(this, argu);
         String myName = n.f2.accept(this, argu);
 
-        symboltable.addClassMethod(argu.getClassName(), myName, myType);
         
         VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
         args.setInMethod(); // set flag to true, since we are inside of a method decl
         
         // if the method has non-void parameters: accept and visit them 
         String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
-       
-        // if there are no arguments, it wont execute the code of FormalParameterList
-        // thus it wont ever check if the method already exists
-        if(argumentList.isEmpty()){
-
-            if(symboltable.containsMethod(args.getClassName(), args.getMethodName(), argumentList)){
-                throw new Exception("Double method declaration: Method " + args.getMethodName() + "(" + argumentList + ") of class " + args.getClassName() + " already exists");                
-            }
-        }
-        
         args.setParameters(argumentList);
+            
+        // check if the method already exists before adding it
+        if(symboltable.containsMethod(args.getClassName(), args.getMethodName(), argumentList))
+            throw new Exception("Double method declaration: Method " + args.getMethodName() + "(" + argumentList + ") of class " + args.getClassName() + " already exists");                
+
+        symboltable.addClassMethod(argu.getClassName(), myName, myType);
+        symboltable.addAllParameters(args.getClassName(), args.getMethodName(), argumentList);
         
         // visit the local fields
         n.f7.accept(this, args);
@@ -224,13 +220,6 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
             String tempRes = n.f1.accept(this, args); // tempRes stores remaining parameters: "type name type name ..."
             ret += tempRes; 
         }
-
-        // check if the same method with the same parameters already exists
-        if(symboltable.containsMethod(args.getClassName(), args.getMethodName(), ret)){
-            throw new Exception("Double method declaration: Method " + args.getMethodName() + "(" + ret + ") of class " + args.getClassName() + " already exists");                
-        }
-        
-        symboltable.addAllParameters(args.getClassName(), args.getMethodName(), ret);
 
         return ret;
     }
