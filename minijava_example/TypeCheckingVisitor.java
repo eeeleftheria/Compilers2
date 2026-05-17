@@ -253,9 +253,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
    @Override
    public String visit(Identifier n, VisitorArgs argu) {
        String name = n.f0.toString();
-       String classn = argu.getClassName();
-       String type = symboltable.getTypeOfField(classn, name);
-
+       
+    //    String classn = argu.getClassName();
+    //    String type = symboltable.getTypeOfField(classn, name);
+       
+       // Return the type if found, otherwise return the identifier name
        return name;
     }
 
