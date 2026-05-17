@@ -181,4 +181,18 @@ public class ClassSymbol{
         return name;
     }
 
+    // returns true if the class contains a method with parameters pars and the given local field
+    public boolean containsMethodLocal(String methodn, String local, String pars){
+        return getMethod(methodn, pars).containsLocal(local);
+    }
+
+    public boolean containsMethod(String methodn, String pars){
+
+        MethodSymbol m = getMethod(methodn, pars);
+        if(m != null){
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -113,4 +113,21 @@ public class MethodSymbol{
         return null;
     }   
 
+    // returns true if the method contains a local field var
+    public boolean containsLocal(String var){
+        
+        for(int i = 0; i < parametersList.size(); i++){
+            if(parametersList.get(i).equals(var)){
+                return true;
+            }
+        }
+
+        for(FieldSymbol f: localFields){
+            if(f.getName().equals(var)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

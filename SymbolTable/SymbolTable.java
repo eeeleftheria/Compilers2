@@ -130,6 +130,20 @@ public class SymbolTable{
         return symbolTable.containsKey(var);
     }
 
+    public boolean containsClass(String c){
+        return symbolTable.containsKey(c);
+    }
+
+    public boolean containsMethodLocal(String classn, String methodn, String local, String pars){
+
+        return symbolTable.get(classn).containsMethodLocal(methodn, local, pars);
+    }
+
+    public boolean containsMethod(String classn, String methodn, String pars){
+
+        return symbolTable.get(classn).containsMethod(methodn, pars);
+    }
+
 
 
 }

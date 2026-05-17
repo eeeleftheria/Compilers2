@@ -291,7 +291,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         // check if rtype is subtype of ltype
         if (!symboltable.isSubtype(ltype, rtype)) {
-            System.out.println("Type error: cannot assign " + rtype + " to " + ltype);
+            throw new Exception("Type error: cannot assign " + rtype + " to " + ltype);
         }
 
         return "";
