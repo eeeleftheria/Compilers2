@@ -2,6 +2,7 @@
 package SymbolTable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Vector;
 
 public class ClassSymbol{
@@ -162,6 +163,22 @@ public class ClassSymbol{
             }
         }
 
+    }
+
+     // FUNCTIONS USED FOR TYPE CHECKING
+     
+    public String getTypeOfField(String var){
+        
+        for(FieldSymbol f: fields){
+            if(f.getName().equals(var)){
+                return f.getType();
+            }
+        }
+        return null;
+    }   
+
+    public String getName(){
+        return name;
     }
 
 }

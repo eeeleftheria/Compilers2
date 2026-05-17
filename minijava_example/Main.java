@@ -26,6 +26,10 @@ public class Main {
 
             SymbolTableVisitor eval = new SymbolTableVisitor(table);
             root.accept(eval, null);
+
+            TypeCheckingVisitor tc = new TypeCheckingVisitor(table);
+            root.accept(tc, null);
+            
         }
         catch(ParseException ex){
             System.out.println(ex.getMessage());

@@ -53,7 +53,11 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         String classname = n.f1.accept(this, null);
         symboltable.addClass(classname);
 
-        // super.visit(n, argu);
+        VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
+        
+        // visit the rest of the main class with the correct class name
+        n.f14.accept(this, args); // VarDeclarations
+        n.f15.accept(this, args); // Statements
 
         System.out.println();
 

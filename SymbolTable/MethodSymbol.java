@@ -101,4 +101,16 @@ public class MethodSymbol{
     }
 
 
+    // FUNCTIONS USED FOR TYPE CHECKING
+
+    public String getTypeOfField(String var){
+        
+        for(int i = 0; i < parametersList.size(); i++){
+            if(parametersList.get(i).equals(var)){
+                return parametersTypes.get(i);
+            }
+        }
+        return null;
+    }   
+
 }

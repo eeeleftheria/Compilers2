@@ -61,6 +61,75 @@ public class SymbolTable{
         }
     }
 
+    // FUNCTIONS USED FOR TYPE CHECKING
+
+    public String getTypeOfField(String className, String var){
+        return symbolTable.get(className).getTypeOfField(var);
+    }
+
+    // returns true if type b is sybtype of a, else false
+    public boolean isSubtype(String a, String b){
+
+        if(isTypeClass(a) && isTypeClass(b)){
+            ClassSymbol aclass = symbolTable.get(a);
+            ClassSymbol bclass = symbolTable.get(b);
+            
+            // if it is the same class
+            if(a.equals(b)){
+                return true;
+            }
+            
+            // check inheritance:
+            // if b extends a: true
+            // if we have: class A, class B extends A, class C extends B
+            // if A a = new C(): true
+            else{
+                ClassSymbol curr = bclass;
+                ClassSymbol left = aclass;
+
+                while(!curr.getParentClass().isEmpty()){
+                    if(curr.getParentClass().equals(left.getName())){
+                        return true;
+                    }
+
+                    // get parent of right class
+                    curr = symbolTable.get(curr.getParentClass());
+                }
+            }
+
+            return false;
+
+        }
+
+        // if one of the two is a class and the other not, then it is not a subclass
+        else if(isTypeClass(a) && !isTypeClass(b) || isTypeClass(b) && !isTypeClass(a)){
+            return false;
+        }
+
+        else if(isPrimitive(b) && isPrimitive(a)){
+            if(a.equals(b))
+                return true;
+
+            return false;
+        }
+
+        return false;
+    }
+
+    private boolean isPrimitive(String type){
+
+        if(type.equals("int") || type.equals("boolean") || type.equals("int[]"))
+            return true;
+       
+        return false;
+    }
+
+    // returns true if the given type is a class name, else false
+    public boolean isTypeClass(String var){
+
+        return symbolTable.containsKey(var);
+    }
+
 
 
 }
