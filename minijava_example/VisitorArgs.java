@@ -14,6 +14,7 @@ public class VisitorArgs {
         this.methodName = method;
         this.fieldName = field;
         this.type = type;
+        this.parameters = pars;
         this.inMethod = false;
     }
 

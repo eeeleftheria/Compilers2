@@ -68,7 +68,7 @@ public class SymbolTable{
     }
 
     public String getTypeOfLocal(String className, String var, String method, String args){
-        return symbolTable.get(className).getTypeOfLocal(method, var, args);
+        return symbolTable.get(className).getTypeOfLocal(var, method, args);
     }
 
     public String getTypeOfParameter(String classn, String var, String method, String args){

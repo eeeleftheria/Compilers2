@@ -58,8 +58,6 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f14.accept(this, args); // VarDeclarations
         n.f15.accept(this, args); // Statements
 
-        System.out.println();
-
         return null;
     }
 
@@ -116,8 +114,6 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f6.accept(this, args);
         n.f7.accept(this, args);
 
-        System.out.println();
-
         return null;
     }
 
@@ -167,6 +163,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         // visit the local fields
         n.f7.accept(this, args);
+
+        // visit the statements
+        n.f8.accept(this, args);
 
         return null;
     }
@@ -264,7 +263,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
        
        // in case of a class field
        String type = symboltable.getTypeOfField(classn, name);
-      
+
       // in case of a method local 
        if(type == null && argu.getMethodName() != null && !argu.getMethodName().isEmpty()){
             type = symboltable.getTypeOfLocal(classn, name, argu.getMethodName(), argu.getParameters());
@@ -306,7 +305,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         String ltype = n.f0.accept(this, argu); // get variable type
         String rtype = n.f2.accept(this, argu); // get type of expression
-        
+
         // check if rtype is subtype of ltype
         if (ltype != null && rtype != null && !symboltable.isSubtype(ltype, rtype)) {
             throw new Exception("Type error: cannot assign " + rtype + " to " + ltype);
@@ -326,6 +325,21 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ArrayAssignmentStatement n, VisitorArgs argu) throws Exception{
+        String type = n.f0.accept(this, argu);
+        if(!type.equals("int[]")){
+            throw new Exception("Array Assignment error: variable is not of type int[]");
+        }
+
+        String typeExp = n.f2.accept(this, argu);
+        if(!typeExp.equals("int")){
+            throw new Exception("Array Assignment error: index for assignment must be an int");
+        }
+
+        String typeRes = n.f5.accept(this, argu);
+        if(!typeRes.equals("int")){
+            throw new Exception("Array Assignment error: value of assignment must be an int");
+        }
+        
         return "";
     }
 
@@ -364,6 +378,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(PrintStatement n, VisitorArgs argu) throws Exception{
+        String type = n.f2.accept(this, argu); 
         return "";
     }
 
@@ -375,7 +390,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(AndExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "boolean";
     }
 
     /**
@@ -385,7 +400,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(CompareExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "boolean";
     }
 
     /**
@@ -395,7 +410,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(PlusExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "int";
     }
 
     /**
@@ -405,7 +420,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(MinusExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "int";
     }
 
     /**
@@ -415,7 +430,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(TimesExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return "int";
     }
 
     /**
@@ -426,7 +441,16 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ArrayLookup n, VisitorArgs argu) throws Exception{
-        return "";
+        String type1 = n.f0.accept(this, argu);
+        if(!type1.equals("int[]")){
+            throw new Exception("ArrayLookup error: left operand is not an int[] type");
+        }
+        String type2 = n.f2.accept(this, argu);
+        if(!type2.equals("int")){
+            throw new Exception("ArrayLookup error: array index is not an int");
+        }
+        
+        return "int";
     }
     
     
@@ -437,7 +461,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ArrayLength n, VisitorArgs argu) throws Exception{
-        return "";
+        return "int";
     }
 
     /**
@@ -457,9 +481,13 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     
         
         // Check if it's a valid class type
-        if(!symboltable.isTypeClass(objectType)){
+        if((!symboltable.isTypeClass(objectType)) && (!objectType.equals("this"))){
 
             throw new Exception("MessageSend error: cannot call method on " + objectType);
+        }
+
+        if(objectType.equals("this")){
+            objectType = argu.getClassName();
         }
 
         // check if object class contains the specific method
@@ -560,6 +588,12 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(ArrayAllocationExpression n, VisitorArgs argu) throws Exception{
+        String type = n.f3.accept(this, argu);
+        if(!type.equals("int")){
+            throw new Exception("Array Allocation error: type of allocation size is not an int");
+        }
+
+
         return "int[]";
     }
 
@@ -587,7 +621,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(NotExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        String type = n.f1.accept(this, argu);  
+        return "boolean";
     }
 
     /**
@@ -597,7 +632,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(BracketExpression n, VisitorArgs argu) throws Exception{
-        return "";
+        return n.f1.accept(this, argu);
     }
 
 }

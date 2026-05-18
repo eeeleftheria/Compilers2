@@ -59,8 +59,6 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f14.accept(this, args); // VarDeclarations
         n.f15.accept(this, args); // Statements
 
-        System.out.println();
-
         return null;
     }
 
@@ -128,8 +126,6 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f5.accept(this, args);
         n.f6.accept(this, args);
         n.f7.accept(this, args);
-
-        System.out.println();
 
         return null;
     }

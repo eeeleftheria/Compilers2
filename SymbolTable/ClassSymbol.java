@@ -77,15 +77,19 @@ public class ClassSymbol{
         
         if (foundMethod != null){
 
-            // split the string 
-            String[] parts = pars.trim().split(" "); // this contains [type1, var1, type2, var2, ...]
-           
-            for(int i = 0; i < parts.length - 1; i += 2){
+            if(pars != null){
 
-                foundMethod.addParam(parts[i+1], parts[i]);
+                // split the string 
+                String[] parts = pars.trim().split(" "); // this contains [type1, var1, type2, var2, ...]
+               
+                for(int i = 0; i < parts.length - 1; i += 2){
+    
+                    foundMethod.addParam(parts[i+1], parts[i]);
+                }
+    
             }
-
             return true;
+
         }
         else{
             return false;
@@ -107,12 +111,17 @@ public class ClassSymbol{
     // searches for the specific method with the specific parameters (format: type par type par ...)
     // in case of overloading and returns the methodSymbol if found, else null
     public MethodSymbol getMethod(String methodName, String parameters){
-      
+
         for(MethodSymbol m : methods){
             if(m.getName().equals(methodName)){
                 
                 String pars = m.getParametersString2();
-
+                
+                // handle null parameters from symbol table
+                if(pars == null){
+                    pars = "";
+                }
+                
                 // if a method with the exact same parameters was found, return it
                 if(pars.equals(parameters)){
                     return m;
@@ -131,13 +140,32 @@ public class ClassSymbol{
             if(m.getName().equals(methodName)){
                 
                 String pars = m.getParametersString2();
+                
+                // handle null parameters from both sources
+                if(pars == null){
+                    pars = "";
+                }
+                if(parameters == null){
+                    parameters = "";
+                }
+                
+                // if both are empty, we found a method with no parameters
+                if(pars.isEmpty() && parameters.isEmpty()){
+                    return m;
+                }
+                
+                // skip if one is empty and the other is not
+                if(pars.isEmpty() || parameters.isEmpty()){
+                    continue;
+                }
+
                 String[] parts_original = pars.split(" ");
                 String[] parts_tocheck = parameters.split(" ");
                 
                 // if the number of types are not equal for both then 
                 // the method is not the desired one
                 if(parts_original.length/2 != parts_tocheck.length){
-                    return null;
+                    continue;
                 }
                 
                 // if a method with the exact same parameter types was found, return it
@@ -215,11 +243,19 @@ public class ClassSymbol{
     }   
 
     public String getTypeOfLocal(String var, String method, String args){
-        return getMethod(method, args).getTypeOfLocal(var);
+        MethodSymbol m = getMethod(method, args);
+        if(m != null){
+            return m.getTypeOfLocal(var);
+        }
+        return null;
     }
 
     public String getTypeOfParameter(String var, String method, String args){
-        return getMethod(method, args).getTypeOfParameter(var);
+        MethodSymbol m = getMethod(method, args);
+        if(m != null){
+            return m.getTypeOfParameter(var);
+        }
+        return null;
     }
 
     public String getName(){
