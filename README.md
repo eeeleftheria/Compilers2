@@ -12,7 +12,27 @@
 
 ## How to Run
 
+```bash
 cd minijava
-make run to run the Example.java
-or
-./runErrorTests.sh kai to output sto ../Results
+```
+### Compile
+```bash
+make
+```
+
+### Run
+Runs with `Example.java` as input.
+```bash
+make run
+```
+
+Runs all the error cases in the directory `../testCases/minijava-error-extra`.
+```bash
+./runErrorTests.sh
+```
+The results can be viewed in `../Results/error-extra-results.txt`.
+
+### Clean
+```bash
+make clean
+```
