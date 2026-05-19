@@ -9,11 +9,11 @@ class DoubleDeclaration6 {
 
 class A {
 
-    public int foo(){
+    public int foo(A a){
         return 1;
     }
 
-    public int foo(){
+    public int foo(A b){
         return 2;
     }
 

@@ -122,11 +122,28 @@ public class ClassSymbol{
                     pars = "";
                 }
                 
-                // if a method with the exact same parameters was found, return it
-                if(pars.equals(parameters)){
-                    return m;
+
+                // both strings containing types have the format: "type var type var ..."
+                String[] parts1 = pars.split(" ");
+                String[] parts2 = parameters.split(" ");
+
+                boolean allTypesEqual = true;
+
+                if(parts1.length == parts2.length){
+                    
+                    for(int i = 0; i < parts1.length; i=i+2){
+
+                        // if there is at least one type not equal, then the methods are different
+                        if(!parts1[i].equals(parts2[i])){
+                            allTypesEqual = false;
+                            break;
+                        }
+                    }
+
+                    if(allTypesEqual == true){
+                        return m;
+                    }
                 }
-                
             }
         }
         return null;
