@@ -20,5 +20,5 @@
 *.rar
 
 lecture_examples/
-minijava_example/syntaxtree
-minijava_example/visitor
+minijava/syntaxtree
+minijava/visitor

@@ -455,11 +455,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     public String visit(ArrayLookup n, VisitorArgs argu) throws Exception{
         String type1 = n.f0.accept(this, argu);
         if(!type1.equals("int[]")){
-            throw new Exception("ArrayLookup error: left operand is not an int[] type");
+            throw new Exception("Array Lookup error: cannot use array indexing on int type, must be int[]");
         }
         String type2 = n.f2.accept(this, argu);
         if(!type2.equals("int")){
-            throw new Exception("ArrayLookup error: array index is not an int");
+            throw new Exception("Array Lookup error: array index is not an int");
         }
         
         return "int";
@@ -556,7 +556,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     public String visit(ExpressionTerm n, VisitorArgs argu) throws Exception{
         
         // expression() must return type
-        return n.f0.accept(this, null);
+        return n.f0.accept(this, argu);
     }
 
     /**
