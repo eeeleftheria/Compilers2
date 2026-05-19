@@ -46,7 +46,7 @@ public class SymbolTable{
 
     public void printSymbolTable(){
         
-        System.out.println("========SYMBOL TABLE========");
+        System.out.println("========SYMBOL TABLE========\n");
         
         for(String key: symbolTable.keySet()){
 
@@ -56,9 +56,10 @@ public class SymbolTable{
             System.out.println("Class: " + key + " " + (parent.isEmpty() ? "" : "extends ") + parent);
             System.out.println("--------------");
             temp.printClassSymbol();
+            System.out.println("\n");
 
-            System.out.println("");
         }
+        System.out.println("============================");
     }
 
     // FUNCTIONS USED FOR TYPE CHECKING

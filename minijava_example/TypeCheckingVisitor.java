@@ -154,18 +154,27 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String myType = n.f1.accept(this, argu);
         String myName = n.f2.accept(this, argu);
 
-        VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
+        VisitorArgs newArgs = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
 
         // if the method has non-void parameters: accept and visit them 
-        String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
+        String argumentList = n.f4.present() ? n.f4.accept(this, newArgs) : "";
         
-        args.setParameters(argumentList);
+        newArgs.setParameters(argumentList);
 
         // visit the local fields
-        n.f7.accept(this, args);
+        n.f7.accept(this, newArgs);
 
         // visit the statements
-        n.f8.accept(this, args);
+        n.f8.accept(this, newArgs);
+
+        // visit the return value
+        String retValueType = n.f10.accept(this, newArgs);
+        String retType = symboltable.getReturnTypeOfMethod(argu.getClassName(), myName, newArgs.getParameters());
+       System.out.println(retType + " " + retValueType);
+        if(!retValueType.equals(retType)){
+            throw new Exception("Method Declaration error: return value type " + retValueType + " does not match expected return type " + retType);
+        }
+
 
         return null;
     }
@@ -339,7 +348,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(!typeRes.equals("int")){
             throw new Exception("Array Assignment error: value of assignment must be an int");
         }
-        
+
         return "";
     }
 
@@ -379,6 +388,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(PrintStatement n, VisitorArgs argu) throws Exception{
         String type = n.f2.accept(this, argu); 
+        if(!type.equals("int")){
+            throw new Exception("Print Statement error: value to print is not an int");
+        }
         return "";
     }
 

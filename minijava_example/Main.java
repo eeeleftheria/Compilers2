@@ -39,6 +39,7 @@ public class Main {
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());
+            System.out.println("\n\n");
         }
         finally{
             try{

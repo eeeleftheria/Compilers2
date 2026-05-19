@@ -8,8 +8,6 @@
     - Double declaration of a function with the EXACT same parameters(todo: check only the types of the parameters, since foo(int a) and foo(int b) must also be considered equal)
 
 - tests to check:
-    - test35.java
-    - test68.java
 
 
 ## How to Run
