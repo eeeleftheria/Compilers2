@@ -1,13 +1,16 @@
 package SymbolTable;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Vector;
 
 public class SymbolTable{
     
-    private HashMap<String, ClassSymbol> symbolTable;
+    private LinkedHashMap<String, ClassSymbol> symbolTable;
 
     public SymbolTable(){
-        symbolTable = new HashMap<>(100);
+        symbolTable = new LinkedHashMap<>(100);
     }
 
     // inserts a new class to the symbol table, along with its parent if it is a subclass

@@ -168,9 +168,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f8.accept(this, newArgs);
 
         // visit the return value
-        String retValueType = n.f10.accept(this, newArgs);
-        String retType = symboltable.getReturnTypeOfMethod(argu.getClassName(), myName, newArgs.getParameters());
-       System.out.println(retType + " " + retValueType);
+        String retValueType = n.f10.accept(this, newArgs); // actual type of return value
+        String retType = symboltable.getReturnTypeOfMethod(argu.getClassName(), myName, newArgs.getParameters()); // proper return type
+  
         if(!retValueType.equals(retType)){
             throw new Exception("Method Declaration error: return value type " + retValueType + " does not match expected return type " + 
               retType + " in method " + myName);
@@ -510,7 +510,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String typesStr = n.f4.accept(this, argu);
 
         if(!symboltable.containsMethodWithTypes(objectType, methodName, typesStr)){
-            throw new Exception("MessageSend error: method " + methodName + " does not exist in class " + objectType);
+            if(typesStr == null)
+                typesStr = "";
+            throw new Exception("MessageSend error: method " + methodName + "( " + typesStr +  ") does not exist in class " + objectType);
         }
         
         // the type of the messageSend result is the return type of the method
