@@ -10,6 +10,13 @@
 - tests to check:
 
 
+-TODO
+    - offsets
+    - If statement
+    - While statement
+    - Block
+    - Override functions and fields
+
 ## How to Run
 
 ```bash
