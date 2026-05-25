@@ -11,6 +11,29 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
     public SymbolTableVisitor(SymbolTable table){
         symboltable = table;
     }
+
+    // gets a string of format "type var type var ..."
+    // and returns true if all var names are differnt
+    // else false   
+    boolean allParamNamesAreDifferent(String params){
+        String[] parts = params.split(" ");
+        for(int i = 1; i < parts.length; i = i + 2){
+    
+            for(int j = 1; j < parts.length; j = j + 2){
+                
+                if(i == j){
+                    continue;
+                }
+
+                if(parts[i].equals(parts[j])){
+                    return false;
+                }
+            }
+
+        }
+
+        return true;
+    }
     
     /**
      * f0 -> MainClass()
@@ -186,6 +209,12 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         // if the method has non-void parameters: accept and visit them 
         String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
         args.setParameters(argumentList);
+
+        // check for parameters with same name
+        if(!allParamNamesAreDifferent(argumentList)){
+            throw new Exception("Method declaration error: Method " + args.getMethodName() + "(" + argumentList + ") of class " 
+            + args.getClassName() + " contains double parameter declaration"); 
+        }
             
         // check if the method already exists before adding it
         if(symboltable.containsMethod(args.getClassName(), args.getMethodName(), argumentList))

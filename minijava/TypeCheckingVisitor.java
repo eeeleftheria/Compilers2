@@ -656,8 +656,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      * f1 -> Clause()
     */
     @Override
-    public String visit(NotExpression n, VisitorArgs argu) throws Exception{
-        String type = n.f1.accept(this, argu);  
+    public String visit(NotExpression n, VisitorArgs argu) throws Exception{ 
         return "boolean";
     }
 
