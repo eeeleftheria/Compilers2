@@ -161,15 +161,36 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         newArgs.setParameters(argumentList);
 
+        // check if there is at least one argument position to not have a 
+        // subtype/supertype relationship between two overloaded methods
+        if(!symboltable.checkOverloadedMethod(newArgs.getClassName(), newArgs.getMethodName(), argumentList))
+            throw new Exception("Double method declaration: \nAll argument positions of method " + newArgs.getMethodName() + "(" + argumentList + ") of class " + newArgs.getClassName() 
+            + " have a \nsubtype/supertype relationship with an existing method");                
+
+
         // visit the local fields
         n.f7.accept(this, newArgs);
 
         // visit the statements
-        n.f8.accept(this, newArgs);
+        n.f8.accept(this, newArgs); 
+
+
+        // extract only the types, since getReturnTypeOfMethod expects only types
+        String argTypes = "";
+        if(argumentList != null && !argumentList.isEmpty()){
+            String[] parts = argumentList.trim().split(" ");
+            for(int i = 0; i < parts.length; i += 2){
+                if(i > 0){
+                    argTypes += " ";
+                }
+                argTypes += parts[i];
+            }
+        }
+        
 
         // visit the return value
         String retValueType = n.f10.accept(this, newArgs); // actual type of return value
-        String retType = symboltable.getReturnTypeOfMethod(argu.getClassName(), myName, newArgs.getParameters()); // proper return type
+        String retType = symboltable.getReturnTypeOfMethod(argu.getClassName(), myName, argTypes); // proper return type
   
         if(!retValueType.equals(retType)){
             throw new Exception("Method Declaration error: return value type " + retValueType + " does not match expected return type " + 

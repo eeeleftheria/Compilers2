@@ -17,6 +17,20 @@
     - Block
     - Override functions and fields
 
+    - check for same names of parameters
+
+- notes:
+    - getReturnTypeOfMethod: takes as input only the types of the parameters in order to find the method. 
+    Initially i passed both the types and the names in the method decl, while in the message send it was correct.
+
+    - check subtype/supertype relation of args in second visitor so all methods will
+    have already been added
+
+    
+
+    
+
+
 ## How to Run
 
 ```bash

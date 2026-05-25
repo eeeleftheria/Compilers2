@@ -166,6 +166,43 @@ public class SymbolTable{
         return symbolTable.get(classn).getReturnTypeOfMethod(method, pars);
     }
 
+    // check if new method can overload: must differ from existing methods by at least one argument position
+    public boolean checkOverloadedMethod(String classn, String methodn, String pars){
+        Vector<MethodSymbol> funcs = symbolTable.get(classn).checkOverloadedMethods(methodn, pars);
+        
+        // check each existing method with same name and number of parameters
+        for(MethodSymbol m: funcs){
+            String currPars = m.getParametersString2();
+            if(currPars == null){
+                currPars = "";
+            }
+            
+            // Format: "type var type var ..."
+            String[] parts1 = currPars.split(" ");
+            String[] parts2 = pars.split(" ");
+
+            // check if at least one argument position is not related (subtype/supertype)
+            boolean hasUnrelatedPosition = false;
+            for(int i = 0; i < parts1.length; i=i+2){
+               
+                if((!isSubtype(parts1[i], parts2[i])) && (!isSubtype(parts2[i], parts1[i]))){
+                    hasUnrelatedPosition = true;
+                    break;
+                }
+            }
+            
+            // if all positions are related, this method cannot be overloaded
+            if(hasUnrelatedPosition == false){
+                return false;
+            }
+        }
+
+        // this point is reached only if there is no 
+        // function that creates a conflict with the one we want to add
+        return true;
+    }
+
+
 
 
 }

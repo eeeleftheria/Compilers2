@@ -189,7 +189,8 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
             
         // check if the method already exists before adding it
         if(symboltable.containsMethod(args.getClassName(), args.getMethodName(), argumentList))
-            throw new Exception("Double method declaration: Method " + args.getMethodName() + "(" + argumentList + ") of class " + args.getClassName() + " already exists");                
+            throw new Exception("Double method declaration: Method " + args.getMethodName() + "(" + argumentList + ") of class " 
+            + args.getClassName() + " already exists");                
 
         symboltable.addClassMethod(argu.getClassName(), myName, myType);
         symboltable.addAllParameters(args.getClassName(), args.getMethodName(), argumentList);

@@ -187,13 +187,15 @@ public class ClassSymbol{
                 
                 // if a method with the exact same parameter types was found, return it
                 boolean equal = true;
+                int j = 0;
                 for(int i = 0; i < parts_original.length; i=i+2){
                    
                    // all parameters have to have the same type
-                    if(!parts_original[i].equals(parts_tocheck[i])){
+                    if(!parts_original[i].equals(parts_tocheck[j])){
                         equal = false;
                         break;
                     }
+                    j++;
                 }
 
                 if(equal == true){
@@ -313,4 +315,44 @@ public class ClassSymbol{
 
         return null;
     }
+
+    // returns a vector with all methods with the same name and the same number of parameters
+    public Vector<MethodSymbol> checkOverloadedMethods(String methodName, String parameters){
+
+        Vector<MethodSymbol> overloadedFuncs = new Vector<MethodSymbol>();
+        
+        for(MethodSymbol m: methods){
+
+            // 1. find methods with the same name
+            if(m.getName().equals(methodName)){
+                
+                String pars = m.getParametersString2();
+                
+                // handle null parameters from symbol table
+                if(pars == null){
+                    pars = "";
+                }
+                
+                // both strings containing types have the format: "type var type var ..."
+                String[] parts1 = pars.split(" ");
+                String[] parts2 = parameters.split(" ");
+                
+                // add the method to the vector if both have the same num of arguments
+                // If the parameters are the exact same, dont calculate as an overloaded
+                // func because the method is refering the the one we are checking, since
+                // it has already been added in the symbol table from the 1st visitor
+
+                if((parts1.length == parts2.length) && !(pars.equals(parameters))){
+                    overloadedFuncs.add(m);
+                    
+                }
+            }
+        }
+    
+        return overloadedFuncs;
+    }
+
+
+
+  
 }
