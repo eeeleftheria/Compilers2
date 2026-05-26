@@ -67,16 +67,65 @@ public class SymbolTable{
 
     // FUNCTIONS USED FOR TYPE CHECKING
 
-    public String getTypeOfField(String className, String var){
+    private String getTypeOfField(String className, String var){
         return symbolTable.get(className).getTypeOfField(var);
     }
 
-    public String getTypeOfLocal(String className, String var, String method, String args){
+    private String getTypeOfLocal(String className, String var, String method, String args){
         return symbolTable.get(className).getTypeOfLocal(var, method, args);
     }
 
-    public String getTypeOfParameter(String classn, String var, String method, String args){
+    private String getTypeOfParameter(String classn, String var, String method, String args){
         return symbolTable.get(classn).getTypeOfParameter(method, var, args);
+    }
+
+    private String getParentClass(String classn){
+        return symbolTable.get(classn).getParentClass();
+    }
+
+    // Check recursively the type of the variable:
+    // 1) check if it is a method local or a parameter
+    // 2) if not, check if it is a field of the current class
+    // 3) if not, check parent
+    public String getType(String classn, String var, String method, String args, Boolean firstClass){
+        
+        String type = null;
+
+        // if we are checking a parent class, we should only check
+        // its fields, and not its methods
+        if(firstClass == true){
+
+            // in case of a method local 
+            if(method != null && !method.isEmpty())
+                type = getTypeOfLocal(classn, var, method, args);
+    
+            // in case of a method parameter 
+            if(type == null && method != null && !method.isEmpty()){
+                type = getTypeOfParameter(classn, var, method, args);
+            }
+        }
+
+        // in case of a class field
+        if(type == null){
+        
+            type = getTypeOfField(classn, var);
+        }
+        
+        // end of recursion if the variable was found
+        if(type != null){
+            return type;
+        }
+
+        // if type is still null, it was not found inside of the current class
+        // so check parent recursively
+        String parent = getParentClass(classn);
+        // if the class has no parent, we have reached end of recursion
+        if(parent.equals("")){
+            return null;
+        }
+
+        return getType(parent, var, method, args, false);
+
     }
 
 

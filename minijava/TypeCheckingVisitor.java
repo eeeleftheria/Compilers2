@@ -50,7 +50,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(MainClass n, VisitorArgs argu) throws Exception {
 
-        String classname = n.f1.accept(this, argu);
+        String classname = n.f1.accept(this, null);
         
         VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
         
@@ -74,7 +74,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         n.f0.accept(this, argu);
         
-        String classname = n.f1.accept(this, argu);
+        String classname = n.f1.accept(this, null);
 
         VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
 
@@ -107,7 +107,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f2.accept(this, args);
        
         // store parent class in symbol table
-        String parent = n.f3.accept(this, args); 
+        String parent = n.f3.accept(this, null); 
 
         n.f4.accept(this, args);
         n.f5.accept(this, args);
@@ -117,21 +117,6 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         return null;
     }
 
-    /**
-    * f0 -> Type()
-    * f1 -> Identifier()
-    * f2 -> ";"
-    */
-    @Override
-    public String visit(VarDeclaration n, VisitorArgs args) throws Exception {
-        String _ret=null;
-
-        String className = args.getClassName();
-        String type = n.f0.accept(this, args);
-        String var = n.f1.accept(this, null);  // we only need the name of the var
-
-        return _ret;
-    }
 
     /**
      * f0 -> "public"
@@ -151,8 +136,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(MethodDeclaration n, VisitorArgs argu) throws Exception {
         
-        String myType = n.f1.accept(this, argu);
-        String myName = n.f2.accept(this, argu);
+        String myType = n.f1.accept(this, null);
+        String myName = n.f2.accept(this, null);
 
         VisitorArgs newArgs = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
 
@@ -281,35 +266,24 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
    @Override
    public String visit(Identifier n, VisitorArgs argu) {
        String name = n.f0.toString();
-       
-        // in case of goal rule, argu is still null so we should
-        // return the name of the class
+
+       // in case of goal rule, argu is still null so we should
+       // return the name of the class
        if(argu == null || argu.getClassName().isEmpty()){
            return name;
-       }
-
-       // in any other case, the identifier comes from a vardecl, 
-       // a class decl or a methoddecl
-       String classn = argu.getClassName();
-       
-       // in case of a class field
-       String type = symboltable.getTypeOfField(classn, name);
-
-      // in case of a method local 
-       if(type == null && argu.getMethodName() != null && !argu.getMethodName().isEmpty()){
-            type = symboltable.getTypeOfLocal(classn, name, argu.getMethodName(), argu.getParameters());
-       }
-       
-       // in case of a method parameter 
-       if(type == null && argu.getMethodName() != null && !argu.getMethodName().isEmpty() ){
-            type = symboltable.getTypeOfParameter(classn, name, argu.getMethodName(), argu.getParameters());
-       }
-
-       if(type == null)
+        }
+        
+        // in any other case, the identifier comes from a vardecl, 
+        // a class decl or a methoddecl
+        String classn = argu.getClassName();
+        
+        // find type of variable recursively
+        String type = symboltable.getType(classn, name, argu.getMethodName(), argu.getParameters(), true);
+        if(type == null)
             return name;
-       
+        
        return type;
-       
+  
     }
 
 
@@ -337,9 +311,17 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String ltype = n.f0.accept(this, argu); // get variable type
         String rtype = n.f2.accept(this, argu); // get type of expression
 
+        if(ltype == null){
+            throw new Exception("Assignment error: left side of assignment is not declared");
+        }
+
+        if(rtype == null){
+            throw new Exception("Assignment error: right side of assignment is not declared");
+        }
+
         // check if rtype is subtype of ltype
         if (ltype != null && rtype != null && !symboltable.isSubtype(ltype, rtype)) {
-            throw new Exception("Type error: cannot assign " + rtype + " to " + ltype);
+            throw new Exception("Assignment error: cannot assign " + rtype + " to " + ltype);
         }
 
         return "";
@@ -356,7 +338,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ArrayAssignmentStatement n, VisitorArgs argu) throws Exception{
-        String type = n.f0.accept(this, argu);
+        String type = n.f0.accept(this, null);
         if(!type.equals("int[]")){
             throw new Exception("Array Assignment error: variable is not of type int[]");
         }
@@ -511,7 +493,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String objectType = n.f0.accept(this, argu);  // type of object
 
         VisitorArgs args = new VisitorArgs(argu.getClassName(), null, null, null, null);
-        String methodName = n.f2.accept(this, args);  // method name
+        String methodName = n.f2.accept(this, null);  // method name
     
         
         // Check if it's a valid class type
@@ -641,7 +623,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(AllocationExpression n, VisitorArgs argu) throws Exception{
-        String classn = n.f1.accept(this, argu);
+        String classn = n.f1.accept(this, null);
         boolean res = symboltable.containsClass(classn);
         if(res == true){
             return classn;

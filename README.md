@@ -6,6 +6,10 @@
     - Double declaration of class
     - Double declaration of method's local or that exists as a parameter
     - Double declaration of a function with the EXACT same parameters
+    - check subtype/supertype relation of args in second visitor so all methods will
+    have already been added
+    - getReturnTypeOfMethod: takes as input only the types of the parameters in order to find the method. 
+    Initially i passed both the types and the names in the method decl, while in the message send it was correct.
 
 - tests to check:
 
@@ -17,14 +21,12 @@
     - Block
     - Override functions and fields
 
-    - check for same names of parameters
+    - implementation of identifier visit does not let me throw exception
+    in assignment statement when either of the two sides was not declared,
+    because it returns the name and not null
 
-- notes:
-    - getReturnTypeOfMethod: takes as input only the types of the parameters in order to find the method. 
-    Initially i passed both the types and the names in the method decl, while in the message send it was correct.
 
-    - check subtype/supertype relation of args in second visitor so all methods will
-    have already been added
+
 
     
 
