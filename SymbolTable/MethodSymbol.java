@@ -7,15 +7,19 @@ public class MethodSymbol{
     
     private String name;
     private String returnType; 
+    private int offset;
     private Vector<String> parametersTypes; // type of each parameter
     private Vector<String> parametersList; // names of the parameters
     private Vector<FieldSymbol> localFields; // local fields of method
 
-    public MethodSymbol(){
+    public MethodSymbol(String n, String retType, int o){
 
         parametersTypes = new Vector<>();
         parametersList = new Vector<>();
         localFields = new Vector<>();
+        name = n;
+        returnType = retType;
+        offset = o;
     }
 
     //#### GETTERS AND SETTERS ####//
@@ -24,20 +28,16 @@ public class MethodSymbol{
         return name;
     }
 
-    public void setName(String n){
-        name = n;
-    }
-
     public String getReturnType(){
         return returnType;
     }
 
-    public void setReturnType(String n){
-        returnType = n;
-    }
-
     public int getNumOfArgs(){
         return parametersList.size();
+    }
+
+    public int getOffset(){
+        return offset;
     }
 
     public Vector<FieldSymbol> getLocals(){
@@ -54,9 +54,7 @@ public class MethodSymbol{
     }
 
     public void addLocalField(String name, String type){
-        FieldSymbol fs = new FieldSymbol();
-        fs.setName(name);
-        fs.setType(type);
+        FieldSymbol fs = new FieldSymbol(name, type, 0);
 
         localFields.add(fs);
     }

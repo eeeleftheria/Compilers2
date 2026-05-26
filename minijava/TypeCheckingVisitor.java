@@ -338,7 +338,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(ArrayAssignmentStatement n, VisitorArgs argu) throws Exception{
-        String type = n.f0.accept(this, null);
+        String type = n.f0.accept(this, argu);
         if(!type.equals("int[]")){
             throw new Exception("Array Assignment error: variable is not of type int[]");
         }
@@ -535,7 +535,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String type1 = n.f0.accept(this, argu);
         String types = n.f1.accept(this, argu);
 
-        types = type1 + " " + types;
+        types = type1 + types;
+   
         return types;
     }
 
@@ -548,7 +549,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         // each node is of type ExpressionTerm
         for ( Node node: n.f0.nodes) {
-            types += " " + node.accept(this, null);
+            types += " " + node.accept(this, argu);
         }
  
         return types;
@@ -562,7 +563,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     public String visit(ExpressionTerm n, VisitorArgs argu) throws Exception{
         
         // expression() must return type
-        return n.f0.accept(this, argu);
+        return n.f1.accept(this, argu);
     }
 
     /**

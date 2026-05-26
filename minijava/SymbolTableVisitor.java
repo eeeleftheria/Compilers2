@@ -47,6 +47,8 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f1.accept(this, null);   
     
         symboltable.printSymbolTable();
+        System.out.println("\n");
+        symboltable.printOffsets();
 
         return "";
     }
@@ -168,7 +170,10 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         // in this case the field comes from a class decl
         if(args.inMethod() == false){
-            symboltable.addClassField(className, var, type);
+
+            int size = symboltable.getSizeOfField(type);
+
+            symboltable.addClassField(className, var, type, size);
         }
         // in this case the field comes from a method decl
         else{

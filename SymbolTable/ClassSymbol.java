@@ -12,6 +12,9 @@ public class ClassSymbol{
 
     private Vector<FieldSymbol> fields; // vector with all the fields of a specific class
     private Vector<MethodSymbol> methods; // vector with all the methods of a specific class
+
+    private int totalFieldBytes;
+    private int totalMethodBytes;
     
     // default constructor
     public ClassSymbol(){
@@ -20,6 +23,8 @@ public class ClassSymbol{
         methods = new Vector<>(); 
         name = "";
         parentClass = "";
+        totalFieldBytes = 0;
+        totalMethodBytes = 0;
     }
 
     public void setParentClass(String parent){
@@ -30,22 +35,36 @@ public class ClassSymbol{
         return parentClass;
     }
 
-    public void addField(String name, String type){
+    public int getTotalFieldBytes(){
+        return totalFieldBytes;
+    }
 
-        FieldSymbol fs = new FieldSymbol();
-        fs.setName(name);
-        fs.setType(type);
+    public int getTotalMethodBytes(){
+        return totalMethodBytes;
+    }
 
+    // if the class extends another one then
+    // the initial offset is the parent's size
+    public void setTotalFieldBytes(int s){
+        totalFieldBytes += s;
+    }
+
+    public void addField(String name, String type, int typeSize){
+
+        FieldSymbol fs = new FieldSymbol(name, type, totalFieldBytes);
         fields.add(fs);
+
+        totalFieldBytes += typeSize;
+
     }
 
     public void addMethod(String name, String returnType){
 
-        MethodSymbol ms = new MethodSymbol();
-        ms.setName(name);
-        ms.setReturnType(returnType);
+        MethodSymbol ms = new MethodSymbol(name, returnType, totalMethodBytes);
 
         methods.add(ms);
+
+        totalMethodBytes += 8;
     }
 
     public void setName(String n){
@@ -353,6 +372,18 @@ public class ClassSymbol{
     }
 
 
+    public void printOffsetVariables(){
+        for(FieldSymbol item: fields){
+            System.out.println(name + "."+ item.getName() + " : " + item.getOffset());
+        }
+        
+    }
 
-  
+    public void printOffsetMethods(){
+        for(MethodSymbol item: methods){
+            System.out.println(name + "."+ item.getName() + " : " + item.getOffset());
+        }
+        
+    }
+    
 }

@@ -25,11 +25,14 @@ public class SymbolTable{
     // if the class extends another one, store its parent
     public void addParentClass(String className, String parent){
         symbolTable.get(className).setParentClass(parent);
+        int bytes = symbolTable.get(parent).getTotalFieldBytes();
+        symbolTable.get(className).setTotalFieldBytes(bytes);
+        
     }
 
     // inserts a field to the class with name className
-    public void addClassField(String className, String field, String type){
-        symbolTable.get(className).addField(field, type);
+    public void addClassField(String className, String field, String type, int typeSize){
+        symbolTable.get(className).addField(field, type, typeSize);
     }
 
     // inserts a method to the class with name className
@@ -76,7 +79,7 @@ public class SymbolTable{
     }
 
     private String getTypeOfParameter(String classn, String var, String method, String args){
-        return symbolTable.get(classn).getTypeOfParameter(method, var, args);
+        return symbolTable.get(classn).getTypeOfParameter(var, method, args);
     }
 
     private String getParentClass(String classn){
@@ -192,6 +195,25 @@ public class SymbolTable{
         return symbolTable.containsKey(var);
     }
 
+    public int getSizeOfField(String type){
+
+        if(isPrimitive(type)){
+            if(type.equals("int"))
+                return 4;
+            
+            else if(type.equals("boolean"))
+                return 1;
+            
+            else if(type.equals("int[]"))
+                return 8;
+        }
+        else if(isTypeClass(type)){
+            return symbolTable.get(type).getTotalFieldBytes();
+        }
+
+        return 0;
+    }
+
     public boolean containsClass(String c){
         return symbolTable.containsKey(c);
     }
@@ -278,6 +300,25 @@ public class SymbolTable{
         // this point is reached only if there is no 
         // function that creates a conflict with the one we want to add
         return true;
+    }
+
+    public void printOffsets(){
+        System.out.println("======== OFFSETS ========\n");
+        
+        for(String key: symbolTable.keySet()){
+
+            ClassSymbol temp = symbolTable.get(key);
+
+            System.out.println("-----------Class: " + key + "-----------");
+            System.out.println("---Variables---");
+            temp.printOffsetVariables();
+            System.out.println("---Methods---");
+            temp.printOffsetMethods();
+
+            System.out.println("\n");
+
+        }
+        System.out.println("============================");
     }
 
 
