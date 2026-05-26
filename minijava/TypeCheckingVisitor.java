@@ -506,7 +506,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
             objectType = argu.getClassName();
         }
 
-        // check if object class contains the specific method
+        // check if object class or parent class contains the specific method
 
         // first we need to construct the string with the arguments of the function call
         // ExpressionList returns string of format "type1 type2 type3 ..."
@@ -515,7 +515,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(!symboltable.containsMethodWithTypes(objectType, methodName, typesStr)){
             if(typesStr == null)
                 typesStr = "";
-            throw new Exception("MessageSend error: method " + methodName + "( " + typesStr +  ") does not exist in class " + objectType);
+            throw new Exception("MessageSend error: class " + objectType + " does not contain method " + methodName + "( " + typesStr +  ")");
         }
         
         // the type of the messageSend result is the return type of the method

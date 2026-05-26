@@ -4,10 +4,14 @@
 
 - semantic errors that ST generator visitor detects:
     - Double declaration of class
+
     - Double declaration of method's local or that exists as a parameter
+
     - Double declaration of a function with the EXACT same parameters
+
     - check subtype/supertype relation of args in second visitor so all methods will
     have already been added
+
     - getReturnTypeOfMethod: takes as input only the types of the parameters in order to find the method. 
     Initially i passed both the types and the names in the method decl, while in the message send it was correct.
 
@@ -16,14 +20,23 @@
 
 -TODO
     - offsets
+
     - If statement
+
     - While statement
+
     - Block
+
     - Override functions and fields
 
     - implementation of identifier visit does not let me throw exception
     in assignment statement when either of the two sides was not declared,
     because it returns the name and not null
+
+    - in TC visitor in messageSend when checking if a method exists, it checks
+    for the EXACT same types and not for subtypes. I dont know how to handle it for now
+    since i have to move the whole logic in the symbol table file so i can have access to 
+    all kinds of types.
 
 
 

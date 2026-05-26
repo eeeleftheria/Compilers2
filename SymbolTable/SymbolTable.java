@@ -206,13 +206,42 @@ public class SymbolTable{
         return symbolTable.get(classn).containsMethod(methodn, pars);
     }
 
+    // check if the current class contains the method,
+    // if not, check parent class recursively
     public boolean containsMethodWithTypes(String classn, String methodn, String pars){
 
-        return symbolTable.get(classn).containsMethodWithTypes(methodn, pars);
+        if(symbolTable.get(classn).containsMethodWithTypes(methodn, pars) == false){
+            String parent = symbolTable.get(classn).getParentClass();
+            
+            // if the class has a parent, check recursively
+            // for the method
+            if(!parent.equals(""))
+                return containsMethodWithTypes(parent, methodn, pars);
+            else
+                return false;
+
+        }
+        else{
+
+            return true;
+        }
     }
 
     public String getReturnTypeOfMethod(String classn, String method, String pars){
-        return symbolTable.get(classn).getReturnTypeOfMethod(method, pars);
+       
+        String res = symbolTable.get(classn).getReturnTypeOfMethod(method, pars);
+
+        if(res == null){
+            String parent = symbolTable.get(classn).getParentClass();
+
+            // check recursively for the method inside the parent class
+            if(!parent.equals(""))
+                return getReturnTypeOfMethod(parent, method, pars);
+            else
+                return null;
+        }
+        else
+            return res;
     }
 
     // check if new method can overload: must differ from existing methods by at least one argument position
