@@ -40,6 +40,11 @@ the parent's method
 the same type?  
 
 
+- BinaryTree: wrong field offsets because it contains types of current class
+- LinkedList: same
+- TreeVisitor: same
+
+
 
 
     
