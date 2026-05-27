@@ -55,11 +55,22 @@ public class SymbolTable{
         // check if it is an override: if yes
         // keep the offset of the original function
         int off = calculateMethodOffset(className, method, pars);
+
+        // no overriden method
         if(off == -1){
             off = symbolTable.get(className).getTotalMethodBytes();
             symbolTable.get(className).setTotalMethodBytes(off + 8);
         }
-        symbolTable.get(className).setMethodOffset(method, pars, off);
+
+        String[] parts = pars.split("");
+        String types = "";
+        for(int i = 0; i < parts.length; i=i+2){
+            types += parts[i];
+            if(i < parts.length - 1){
+                types += " ";
+            }
+        }
+        symbolTable.get(className).setMethodOffset(method, types, off);
 
     }
     // adds a local field to the method symbol

@@ -53,6 +53,8 @@ public class ClassSymbol{
         totalMethodBytes = s;
     }
 
+
+    // pars = type var type var ...
     public void setMethodOffset(String meth, String types, int o){
         MethodSymbol m = getMethodWithTypes(meth, types);
         if(m != null){
@@ -153,7 +155,6 @@ public class ClassSymbol{
                 if(pars == null){
                     pars = "";
                 }
-                
 
                 // both strings containing types have the format: "type var type var ..."
                 String[] parts1 = pars.split(" ");
