@@ -14,7 +14,6 @@ run: compile
 
 clean:
 	find . -maxdepth 1 -name "*.java" ! -name "Example.java" ! -name "Main.java" ! -name "SymbolTableVisitor.java" ! -name "TypeCheckingVisitor.java" ! -name "VisitorArgs.java" -delete
-	rm minijava_example.iml
-	rm minijava.html
+	rm -f minijava_example.iml minijava.html
 	rm -rf *.class syntaxtree visitor minijava-jtb.jj *~
 	rm -rf $(BUILD_DIR)
