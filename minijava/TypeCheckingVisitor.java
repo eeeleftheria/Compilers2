@@ -506,11 +506,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(MessageSend n, VisitorArgs argu) throws Exception{
         String objectType = n.f0.accept(this, argu);  // type of object
-
-        VisitorArgs args = new VisitorArgs(argu.getClassName(), null, null, null, null);
         String methodName = n.f2.accept(this, null);  // method name
     
-        
         // Check if it's a valid class type
         if((!symboltable.isTypeClass(objectType)) && (!objectType.equals("this"))){
 

@@ -115,6 +115,7 @@ public class SymbolTable{
     // 1) check if it is a method local or a parameter
     // 2) if not, check if it is a field of the current class
     // 3) if not, check parent
+    // args format: type var type var ...
     public String getType(String classn, String var, String method, String args, Boolean firstClass){
         
         String type = null;
@@ -338,8 +339,17 @@ public class SymbolTable{
 
     public int calculateMethodOffset(String classn, String methodn, String pars){
 
+        String originalClass = classn;
         String parent = symbolTable.get(classn).getParentClass();
         Vector<String> hierarchy = new Vector<String>(5);
+
+        String[] parts = pars.split(" ");
+        String types = "";
+        for(int i = 0; i < parts.length; i = i + 2){
+            if(i > 0) 
+                types += " ";
+            types += parts[i];
+        }
 
         // first we need to find the root of the hierarchy
         while(!parent.equals("")){
@@ -354,8 +364,8 @@ public class SymbolTable{
             String curr = hierarchy.get(i);
 
             // if we find the method return its offset
-            if(containsMethodWithTypes(curr, methodn, pars)){
-                return symbolTable.get(curr).getMethodWithTypes(methodn, pars).getOffset();
+            if(containsMethodWithTypes(curr, methodn, types)){
+                return symbolTable.get(curr).getMethodWithTypes(methodn, types).getOffset();
             }
         }
         
