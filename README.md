@@ -24,11 +24,6 @@
 in assignment statement when either of the two sides was not declared,
 because it returns the name and not null
 
-- in TC visitor in messageSend when checking if a method exists, it checks
-for the EXACT same types and not for subtypes. I dont know how to handle it for now
-since i have to move the whole logic in the symbol table file so i can have access to 
-all kinds of types.
-
 - offsets are only correct for fields and not methods:
 for methods, overriden methods have the same offset as
 the parent's method
