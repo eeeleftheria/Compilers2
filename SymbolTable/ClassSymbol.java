@@ -62,6 +62,10 @@ public class ClassSymbol{
 
     }
 
+    public Vector<MethodSymbol> getMethods(){
+        return new Vector<MethodSymbol>(methods);
+    }
+
     public void addMethod(String name, String returnType){
 
         MethodSymbol ms = new MethodSymbol(name, returnType, totalMethodBytes);
@@ -319,25 +323,6 @@ public class ClassSymbol{
         return false;
     }
 
-    public boolean containsMethodWithTypes(String methodn, String pars){
-
-        MethodSymbol m = getMethodWithTypes(methodn, pars);
-        if(m != null){
-            return true;
-        }
-
-        return false;
-    }
-
-    public String getReturnTypeOfMethod(String method, String pars){
-        
-        MethodSymbol m = getMethodWithTypes(method, pars);
-        if(m != null){
-            return m.getReturnType();
-        }
-
-        return null;
-    }
 
     // returns a vector with all methods with the same name and the same number of parameters
     public Vector<MethodSymbol> checkOverloadedMethods(String methodName, String parameters){

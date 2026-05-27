@@ -177,7 +177,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String retValueType = n.f10.accept(this, newArgs); // actual type of return value
         String retType = symboltable.getReturnTypeOfMethod(argu.getClassName(), myName, argTypes); // proper return type
   
-        if(!retValueType.equals(retType)){
+        if(!symboltable.isSubtype(retValueType, retType)){
             throw new Exception("Method Declaration error: return value type " + retValueType + " does not match expected return type " + 
               retType + " in method " + myName);
         }

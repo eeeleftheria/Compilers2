@@ -242,11 +242,74 @@ public class SymbolTable{
         return symbolTable.get(classn).containsMethod(methodn, pars);
     }
 
+    
+    // searches for the specific method with the specific parameter types(format: type1 type2 ...)
+    // in case of overloading and returns the methodSymbol if found, else null
+    public MethodSymbol getMethodWithTypes(String classn, String methodName, String parameters){
+      
+        for(MethodSymbol m : symbolTable.get(classn).getMethods()){
+            if(m.getName().equals(methodName)){
+                
+                String pars = m.getParametersString2();
+                
+                // handle null parameters from both sources
+                if(pars == null){
+                    pars = "";
+                }
+                if(parameters == null){
+                    parameters = "";
+                }
+                
+                // if both are empty, we found a method with no parameters
+                if(pars.isEmpty() && parameters.isEmpty()){
+                    return m;
+                }
+                
+                // skip if one is empty and the other is not
+                if(pars.isEmpty() || parameters.isEmpty()){
+                    continue;
+                }
+
+                String[] parts_original = pars.split(" ");
+                String[] parts_tocheck = parameters.split(" ");
+                
+                // if the number of types are not equal for both then 
+                // the method is not the desired one
+                if(parts_original.length/2 != parts_tocheck.length){
+                    continue;
+                }
+                
+                // if a method with the exact same parameter types/or subtypes was found, return it
+                boolean equal = true;
+                int j = 0;
+                for(int i = 0; i < parts_original.length; i=i+2){
+                   
+                   // all parameters have to have the same type or the type
+                   // of the argument we are calling the function with must be 
+                   // a subtype of the original parameter
+                    if(!isSubtype(parts_original[i], parts_tocheck[j])){
+                        equal = false;
+                        break;
+                    }
+                    j++;
+                }
+
+                if(equal == true){
+                    return m;
+                }
+                
+            }
+        }
+        return null;
+    }
+
+
     // check if the current class contains the method,
     // if not, check parent class recursively
     public boolean containsMethodWithTypes(String classn, String methodn, String pars){
 
-        if(symbolTable.get(classn).containsMethodWithTypes(methodn, pars) == false){
+        MethodSymbol m = getMethodWithTypes(classn, methodn, pars);
+        if(m == null){
             String parent = symbolTable.get(classn).getParentClass();
             
             // if the class has a parent, check recursively
@@ -255,19 +318,17 @@ public class SymbolTable{
                 return containsMethodWithTypes(parent, methodn, pars);
             else
                 return false;
-
         }
         else{
-
             return true;
         }
+
     }
 
     public String getReturnTypeOfMethod(String classn, String method, String pars){
-       
-        String res = symbolTable.get(classn).getReturnTypeOfMethod(method, pars);
-
-        if(res == null){
+        
+        MethodSymbol m = getMethodWithTypes(classn, method, pars);
+        if(m == null){
             String parent = symbolTable.get(classn).getParentClass();
 
             // check recursively for the method inside the parent class
@@ -277,7 +338,7 @@ public class SymbolTable{
                 return null;
         }
         else
-            return res;
+            return m.getReturnType();
     }
 
     // check if new method can overload: must differ from existing methods by at least one argument position
