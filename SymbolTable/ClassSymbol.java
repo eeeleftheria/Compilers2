@@ -17,11 +17,11 @@ public class ClassSymbol{
     private int totalMethodBytes;
     
     // default constructor
-    public ClassSymbol(){
+    public ClassSymbol(String n){
         // default initial capacity is 10       
         fields = new Vector<>(); 
         methods = new Vector<>(); 
-        name = "";
+        name = n;
         parentClass = "";
         totalFieldBytes = 0;
         totalMethodBytes = 0;
@@ -47,6 +47,10 @@ public class ClassSymbol{
     // the initial offset is the parent's size
     public void setTotalFieldBytes(int s){
         totalFieldBytes += s;
+    }
+
+    public void setTotalMethodBytes(int s){
+        totalMethodBytes += s;
     }
 
     public void addField(String name, String type, int typeSize){

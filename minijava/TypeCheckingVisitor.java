@@ -52,7 +52,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         String classname = n.f1.accept(this, null);
         
-        VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
+        VisitorArgs args = new VisitorArgs("main", "", "", "", "");
         
         // visit the rest of the main class with the correct class name
         n.f14.accept(this, args); // VarDeclarations
@@ -535,6 +535,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String type1 = n.f0.accept(this, argu);
         String types = n.f1.accept(this, argu);
 
+        if(type1.equals("this"))
+            type1 = argu.getClassName();
+
         types = type1 + types;
    
         return types;
@@ -563,7 +566,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     public String visit(ExpressionTerm n, VisitorArgs argu) throws Exception{
         
         // expression() must return type
-        return n.f1.accept(this, argu);
+        String type = n.f1.accept(this, argu);
+        if(type.equals("this"))
+            type = argu.getClassName();
+
+        return type;
     }
 
     /**

@@ -16,8 +16,7 @@ public class SymbolTable{
     // inserts a new class to the symbol table, along with its parent if it is a subclass
     public void addClass(String name){
 
-        ClassSymbol cs = new ClassSymbol();
-        cs.setName(name);
+        ClassSymbol cs = new ClassSymbol(name);
 
         symbolTable.put(name, cs);
     }
@@ -25,8 +24,10 @@ public class SymbolTable{
     // if the class extends another one, store its parent
     public void addParentClass(String className, String parent){
         symbolTable.get(className).setParentClass(parent);
-        int bytes = symbolTable.get(parent).getTotalFieldBytes();
-        symbolTable.get(className).setTotalFieldBytes(bytes);
+        int bytes1 = symbolTable.get(parent).getTotalFieldBytes();
+        int bytes2 = symbolTable.get(parent).getTotalMethodBytes();
+        symbolTable.get(className).setTotalFieldBytes(bytes1);
+        symbolTable.get(className).setTotalMethodBytes(bytes2);
         
     }
 
@@ -52,9 +53,14 @@ public class SymbolTable{
 
     public void printSymbolTable(){
         
-        System.out.println("========SYMBOL TABLE========\n");
+        if(symbolTable.size() != 1)
+            System.out.println("========SYMBOL TABLE========\n");
+
         
         for(String key: symbolTable.keySet()){
+
+            if(key.equals("main"))
+                continue;
 
             ClassSymbol temp = symbolTable.get(key);
             String parent = temp.getParentClass();
@@ -65,7 +71,9 @@ public class SymbolTable{
             System.out.println("\n");
 
         }
-        System.out.println("============================");
+        if(symbolTable.size() != 1)
+            System.out.println("============================");
+
     }
 
     // FUNCTIONS USED FOR TYPE CHECKING
@@ -303,11 +311,15 @@ public class SymbolTable{
     }
 
     public void printOffsets(){
-        System.out.println("======== OFFSETS ========\n");
+        if(symbolTable.size() > 1)
+            System.out.println("======== OFFSETS ========\n");
         
         for(String key: symbolTable.keySet()){
 
             ClassSymbol temp = symbolTable.get(key);
+
+            if(key.equals("main"))
+                continue;
 
             System.out.println("-----------Class: " + key + "-----------");
             System.out.println("---Variables---");
@@ -318,7 +330,8 @@ public class SymbolTable{
             System.out.println("\n");
 
         }
-        System.out.println("============================");
+        if(symbolTable.size() > 1)
+            System.out.println("============================");
     }
 
 

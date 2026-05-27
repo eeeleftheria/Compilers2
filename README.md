@@ -38,6 +38,21 @@
     since i have to move the whole logic in the symbol table file so i can have access to 
     all kinds of types.
 
+    - offsets are only correct for fields and not methods:
+    for methods, overriden methods have the same offset as
+    the parent's method
+
+Tests:
+- classes.txt: should derived.set: 0 be printed or not? (override)
+
+- derivedCall: MessageSend error: class F does not contain method foo( B) because foo takes A which is the parent. This is described
+above
+
+- main: same as first one
+
+- test99: how can i know size of class which has a field of
+the same type?  
+
 
 
 

@@ -76,9 +76,9 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
     @Override
     public String visit(MainClass n, VisitorArgs argu) throws Exception {
         String classname = n.f1.accept(this, null);
-        symboltable.addClass(classname);
+        symboltable.addClass("main");
 
-        VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
+        VisitorArgs args = new VisitorArgs("main", "", "", "", "");
         
         // visit the rest of the main class with the correct class name
         n.f14.accept(this, args); // VarDeclarations
