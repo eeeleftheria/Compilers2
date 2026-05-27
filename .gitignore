@@ -28,3 +28,4 @@ minijava/*.java
 !minijava/TypeCheckingVisitor.java
 !minijava/VisitorArgs.java
 
+Results/
