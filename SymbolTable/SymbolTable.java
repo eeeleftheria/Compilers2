@@ -30,9 +30,10 @@ public class SymbolTable{
     // if the class extends another one, store its parent
     public void addParentClass(String className, String parent){
         symbolTable.get(className).setParentClass(parent);
-        int bytes1 = symbolTable.get(parent).getTotalFieldBytes();
+        int bytes = symbolTable.get(parent).getTotalFieldBytes();
+        symbolTable.get(className).setTotalFieldBytes(bytes);
+       
         int bytes2 = symbolTable.get(parent).getTotalMethodBytes();
-        symbolTable.get(className).setTotalFieldBytes(bytes1);
         symbolTable.get(className).setTotalMethodBytes(bytes2);
         
     }
@@ -49,6 +50,16 @@ public class SymbolTable{
 
     public void addAllParameters(String className, String method, String pars){
         symbolTable.get(className).addAllParameters(method, pars);
+
+        // now that the method to add has parameters
+        // check if it is an override: if yes
+        // keep the offset of the original function
+        int off = calculateMethodOffset(className, method, pars);
+        if(off == -1){
+            off = symbolTable.get(className).getTotalMethodBytes();
+            symbolTable.get(className).setTotalMethodBytes(off + 8);
+        }
+        symbolTable.get(className).setMethodOffset(method, pars, off);
 
     }
     // adds a local field to the method symbol
@@ -324,6 +335,35 @@ public class SymbolTable{
         }
 
     }
+
+    public int calculateMethodOffset(String classn, String methodn, String pars){
+
+        String parent = symbolTable.get(classn).getParentClass();
+        Vector<String> hierarchy = new Vector<String>(5);
+
+        // first we need to find the root of the hierarchy
+        while(!parent.equals("")){
+            hierarchy.add(parent);
+            classn = parent;
+            parent = symbolTable.get(classn).getParentClass();
+        }
+        
+        // now we should start searching for the method, 
+        // from the root and below until we find it 
+        for(int i = hierarchy.size() - 1; i >= 0; i--){
+            String curr = hierarchy.get(i);
+
+            // if we find the method return its offset
+            if(containsMethodWithTypes(curr, methodn, pars)){
+                return symbolTable.get(curr).getMethodWithTypes(methodn, pars).getOffset();
+            }
+        }
+        
+        // in this case we do not have any overridden method
+        return -1;
+    }
+
+
 
     public String getReturnTypeOfMethod(String classn, String method, String pars){
         

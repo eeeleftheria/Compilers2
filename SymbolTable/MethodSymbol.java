@@ -40,6 +40,10 @@ public class MethodSymbol{
         return offset;
     }
 
+    public void setOffset(int o){
+        offset = o;
+    }
+
     public Vector<FieldSymbol> getLocals(){
 
         // !! return copy of vector (objects' value is copied to a reference in java)

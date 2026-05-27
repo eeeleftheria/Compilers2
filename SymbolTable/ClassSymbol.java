@@ -50,7 +50,14 @@ public class ClassSymbol{
     }
 
     public void setTotalMethodBytes(int s){
-        totalMethodBytes += s;
+        totalMethodBytes = s;
+    }
+
+    public void setMethodOffset(String meth, String types, int o){
+        MethodSymbol m = getMethodWithTypes(meth, types);
+        if(m != null){
+            m.setOffset(o);
+        }
     }
 
     public void addField(String name, String type, int typeSize){
@@ -71,8 +78,6 @@ public class ClassSymbol{
         MethodSymbol ms = new MethodSymbol(name, returnType, totalMethodBytes);
 
         methods.add(ms);
-
-        totalMethodBytes += 8;
     }
 
     public void setName(String n){
@@ -376,3 +381,5 @@ public class ClassSymbol{
     }
     
 }
+
+

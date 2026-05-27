@@ -30,9 +30,12 @@ the parent's method
 
 ## Tests:
 
-- derivedCall: MessageSend error: class F does not contain method foo( B) because foo takes A which is the parent. This is described
-above
-
+- Classes.txt
+- Main.txt
+- ShadowBaseField
+- test20
+- test82
+- test93
 - test99: how can i know size of class which has a field of
 the same type?  
 
