@@ -13,12 +13,18 @@ public class SymbolTable{
         symbolTable = new LinkedHashMap<>(100);
     }
 
+    private String mainClass;
+
     // inserts a new class to the symbol table, along with its parent if it is a subclass
     public void addClass(String name){
 
         ClassSymbol cs = new ClassSymbol(name);
 
         symbolTable.put(name, cs);
+    }
+
+    public void setMainClass(String name){
+        mainClass = name;
     }
 
     // if the class extends another one, store its parent
@@ -53,13 +59,13 @@ public class SymbolTable{
 
     public void printSymbolTable(){
         
-        if(symbolTable.size() != 1)
+        if(symbolTable.size() > 1)
             System.out.println("========SYMBOL TABLE========\n");
 
         
         for(String key: symbolTable.keySet()){
 
-            if(key.equals("main"))
+            if(key.equals(mainClass))
                 continue;
 
             ClassSymbol temp = symbolTable.get(key);
@@ -71,7 +77,7 @@ public class SymbolTable{
             System.out.println("\n");
 
         }
-        if(symbolTable.size() != 1)
+        if(symbolTable.size() > 1)
             System.out.println("============================");
 
     }
@@ -318,7 +324,7 @@ public class SymbolTable{
 
             ClassSymbol temp = symbolTable.get(key);
 
-            if(key.equals("main"))
+            if(key.equals(mainClass))
                 continue;
 
             System.out.println("-----------Class: " + key + "-----------");

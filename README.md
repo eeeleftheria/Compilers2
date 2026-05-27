@@ -18,12 +18,6 @@
 
 ## TODO
 
-- If statement
-
-- While statement
-
-- Block
-
 - Override functions
 
 - implementation of identifier visit does not let me throw exception

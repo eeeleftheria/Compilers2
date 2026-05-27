@@ -52,7 +52,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         String classname = n.f1.accept(this, null);
         
-        VisitorArgs args = new VisitorArgs("main", "", "", "", "");
+        VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
         
         // visit the rest of the main class with the correct class name
         n.f14.accept(this, args); // VarDeclarations
@@ -295,7 +295,9 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      * f2 -> "}" 
      * */
     @Override
-    public String visit(Block n, VisitorArgs argu){
+    public String visit(Block n, VisitorArgs argu) throws Exception{
+        n.f1.accept(this, argu);
+
         return "";
     }
 
@@ -367,6 +369,13 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(IfStatement n, VisitorArgs argu) throws Exception{
+        String typeIf = n.f2.accept(this, argu);
+        if(!typeIf.equals("boolean")){
+            throw new Exception("If statement error: condition expression's type is " + typeIf + " instead of boolean");
+        }
+        n.f4.accept(this, argu);
+        n.f6.accept(this, argu);
+
         return "";
     }
 
@@ -379,6 +388,12 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(WhileStatement n, VisitorArgs argu) throws Exception{
+        String typeWhile = n.f2.accept(this, argu);
+        if(!typeWhile.equals("boolean")){
+            throw new Exception("If statement error: condition expression's type is " + typeWhile + " instead of boolean");
+        }
+        n.f4.accept(this, argu);
+
         return "";
     }    
 
@@ -602,7 +617,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(ThisExpression n, VisitorArgs argu) throws Exception{
-        return "this";
+        return argu.getClassName();
     }
 
     /**
