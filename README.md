@@ -15,40 +15,34 @@
     - getReturnTypeOfMethod: takes as input only the types of the parameters in order to find the method. 
     Initially i passed both the types and the names in the method decl, while in the message send it was correct.
 
-- tests to check:
 
+## TODO
 
--TODO
-    - offsets
+- If statement
 
-    - If statement
+- While statement
 
-    - While statement
+- Block
 
-    - Block
+- Override functions
 
-    - Override functions and fields
+- implementation of identifier visit does not let me throw exception
+in assignment statement when either of the two sides was not declared,
+because it returns the name and not null
 
-    - implementation of identifier visit does not let me throw exception
-    in assignment statement when either of the two sides was not declared,
-    because it returns the name and not null
+- in TC visitor in messageSend when checking if a method exists, it checks
+for the EXACT same types and not for subtypes. I dont know how to handle it for now
+since i have to move the whole logic in the symbol table file so i can have access to 
+all kinds of types.
 
-    - in TC visitor in messageSend when checking if a method exists, it checks
-    for the EXACT same types and not for subtypes. I dont know how to handle it for now
-    since i have to move the whole logic in the symbol table file so i can have access to 
-    all kinds of types.
+- offsets are only correct for fields and not methods:
+for methods, overriden methods have the same offset as
+the parent's method
 
-    - offsets are only correct for fields and not methods:
-    for methods, overriden methods have the same offset as
-    the parent's method
-
-Tests:
-- classes.txt: should derived.set: 0 be printed or not? (override)
+## Tests:
 
 - derivedCall: MessageSend error: class F does not contain method foo( B) because foo takes A which is the parent. This is described
 above
-
-- main: same as first one
 
 - test99: how can i know size of class which has a field of
 the same type?  
@@ -82,6 +76,12 @@ Runs all the error cases in the directory `../testCases/minijava-error-extra`.
 ./runErrorTests.sh
 ```
 The results can be viewed in `../Results/error-extra-results.txt`.
+
+Runs all the extra offset examples in the directory `../testCases/minijava-extra`.
+```bash
+./runOffsetsExtra.sh
+```
+The results can be viewed in `../Results/offsets-extra-results.txt`.
 
 ### Clean
 ```bash
