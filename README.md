@@ -124,10 +124,10 @@ makes it unfeasible.
 
 - offsets are only correct for fields and not methods:
 To implement the offset logic for the methods, I tried following the steps:
-1. Inside function `addAllParameters` which is the final step for the creation of a method, I tried calculating the appropriate offset through the
-`calculateMethodOffset` function.
-2. The `calculateMethodOffset` function in specific, detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes, then it returns -1, meaning the offset should be calculated in a cumulative way. The above functions seem to function properly, after a few tests, meaning the issue is later.
-3. `setMethodOffset` function is called on the class.  
+    1. Inside function `addAllParameters` which is the final step for the creation of a method, I tried calculating the appropriate offset through the
+    `calculateMethodOffset` function.
+    2. The `calculateMethodOffset` function in specific, detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes, then it returns -1, meaning the offset should be calculated in a cumulative way. The above functions seem to function properly, after a few tests, meaning the issue is later.
+    3. `setMethodOffset` function is called on the class.  
 
 ## Tests with known issues:
 
