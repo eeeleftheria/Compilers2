@@ -13,40 +13,42 @@ public class Main {
             System.exit(1);
         }
 
-        FileInputStream fis = null;
-        try{
-            fis = new FileInputStream(args[0]);
-            MiniJavaParser parser = new MiniJavaParser(fis);
-
-            Goal root = parser.Goal();
-
-            System.err.println("Program parsed successfully.");
-
-            SymbolTable table = new SymbolTable();
-
-            SymbolTableVisitor eval = new SymbolTableVisitor(table);
-            root.accept(eval, null);
-
-            TypeCheckingVisitor tc = new TypeCheckingVisitor(table);
-            root.accept(tc, null);
-            
-        }
-        catch(ParseException ex){
-            System.out.println(ex.getMessage());
-        }
-        catch(FileNotFoundException ex){
-            System.err.println(ex.getMessage());
-        }
-        catch(Exception ex){
-            System.out.println(ex.getMessage());
-            System.out.println("\n\n");
-        }
-        finally{
+        for(String filename : args){
+            FileInputStream fis = null;
             try{
-                if(fis != null) fis.close();
+                fis = new FileInputStream(filename);
+                MiniJavaParser parser = new MiniJavaParser(fis);
+
+                Goal root = parser.Goal();
+
+                System.err.println("Program parsed successfully.");
+
+                SymbolTable table = new SymbolTable();
+
+                SymbolTableVisitor eval = new SymbolTableVisitor(table);
+                root.accept(eval, null);
+
+                TypeCheckingVisitor tc = new TypeCheckingVisitor(table);
+                root.accept(tc, null);
+                
             }
-            catch(IOException ex){
+            catch(ParseException ex){
+                System.out.println(ex.getMessage());
+            }
+            catch(FileNotFoundException ex){
                 System.err.println(ex.getMessage());
+            }
+            catch(Exception ex){
+                System.out.println(ex.getMessage());
+                System.out.println("\n\n");
+            }
+            finally{
+                try{
+                    if(fis != null) fis.close();
+                }
+                catch(IOException ex){
+                    System.err.println(ex.getMessage());
+                }
             }
         }
     }

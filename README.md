@@ -109,6 +109,11 @@ The results can be viewed in `../Results/offsets-extra-results.txt`.
 ```
 The results can be viewed in `../Results/offsets-results.txt`.
 
+5. Runs on all given files as arguments.
+```bash
+java -cp .:../build Main Example.java Example2.java ...
+```
+
 ### Clean
 ```bash
 make clean
