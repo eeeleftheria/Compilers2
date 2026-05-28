@@ -350,7 +350,6 @@ public class SymbolTable{
 
     public int calculateMethodOffset(String classn, String methodn, String pars){
 
-        String originalClass = classn;
         String parent = symbolTable.get(classn).getParentClass();
         Vector<String> hierarchy = new Vector<String>(5);
 
