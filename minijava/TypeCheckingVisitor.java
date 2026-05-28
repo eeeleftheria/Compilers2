@@ -23,8 +23,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f0.accept(this, null); // Goal.MainClass.accept(MyVisitor) -> MyVisitor.visit(MainClass)
         n.f1.accept(this, null);   
     
-
-        return "";
+        return null;
     }
    
     /**
@@ -105,10 +104,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
         
         n.f2.accept(this, args);
-       
-        // store parent class in symbol table
-        String parent = n.f3.accept(this, null); 
-
+        n.f3.accept(this, args); 
         n.f4.accept(this, args);
         n.f5.accept(this, args);
         n.f6.accept(this, args);
@@ -142,6 +138,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         VisitorArgs newArgs = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
 
         // if the method has non-void parameters: accept and visit them 
+        // argumentList is of format: type var type var ...
         String argumentList = n.f4.present() ? n.f4.accept(this, newArgs) : "";
         
         newArgs.setParameters(argumentList);
@@ -151,7 +148,6 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(!symboltable.checkOverloadedMethod(newArgs.getClassName(), newArgs.getMethodName(), argumentList))
             throw new Exception("Double method declaration: \nAll argument positions of method " + newArgs.getMethodName() + "(" + argumentList + ") of class " + newArgs.getClassName() 
             + " have a \nsubtype/supertype relationship with an existing method");                
-
 
         // visit the local fields
         n.f7.accept(this, newArgs);
@@ -181,7 +177,6 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
             throw new Exception("Method Declaration error: return value type " + retValueType + " does not match expected return type " + 
               retType + " in method " + myName);
         }
-
 
         return null;
     }
@@ -267,8 +262,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
    public String visit(Identifier n, VisitorArgs argu) {
        String name = n.f0.toString();
 
-       // in case of goal rule, argu is still null so we should
-       // return the name of the class
+       // when argu is null, we only care about the actual string
        if(argu == null || argu.getClassName().isEmpty()){
            return name;
         }
@@ -277,7 +271,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         // a class decl or a methoddecl
         String classn = argu.getClassName();
         
-        // find type of variable recursively
+        // find type of variable recursively:
+        // check if it is a method's local or a class' field or a field of a parent class
         String type = symboltable.getType(classn, name, argu.getMethodName(), argu.getParameters(), true);
         if(type == null)
             return name;
@@ -285,9 +280,6 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
        return type;
   
     }
-
-
-    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * f0 -> "{" 
@@ -298,7 +290,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     public String visit(Block n, VisitorArgs argu) throws Exception{
         n.f1.accept(this, argu);
 
-        return "";
+        return null;
     }
 
     /**
@@ -313,6 +305,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         String ltype = n.f0.accept(this, argu); // get variable type
         String rtype = n.f2.accept(this, argu); // get type of expression
 
+        // the first two exceptions won't be called, because visit(identifier)
+        // will never return null
         if(ltype == null){
             throw new Exception("Assignment error: left side of assignment is not declared");
         }
@@ -320,13 +314,14 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(rtype == null){
             throw new Exception("Assignment error: right side of assignment is not declared");
         }
+        ///////////////////////////////////////////////////////////////////////////
 
         // check if rtype is subtype of ltype
         if (ltype != null && rtype != null && !symboltable.isSubtype(ltype, rtype)) {
             throw new Exception("Assignment error: cannot assign " + rtype + " to " + ltype);
         }
 
-        return "";
+        return null;
     }
 
     /**
@@ -355,7 +350,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
             throw new Exception("Array Assignment error: value of assignment must be an int");
         }
 
-        return "";
+        return null;
     }
 
     /**
@@ -376,7 +371,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         n.f4.accept(this, argu);
         n.f6.accept(this, argu);
 
-        return "";
+        return null;
     }
 
     /**
@@ -394,7 +389,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         }
         n.f4.accept(this, argu);
 
-        return "";
+        return null;
     }    
 
     /**
@@ -410,7 +405,8 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(!type.equals("int")){
             throw new Exception("Print Statement error: value to print is not an int");
         }
-        return "";
+
+        return null;
     }
 
 
@@ -476,6 +472,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(!type1.equals("int[]")){
             throw new Exception("Array Lookup error: cannot use array indexing on int type, must be int[]");
         }
+
         String type2 = n.f2.accept(this, argu);
         if(!type2.equals("int")){
             throw new Exception("Array Lookup error: array index is not an int");
@@ -505,12 +502,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(MessageSend n, VisitorArgs argu) throws Exception{
-        String objectType = n.f0.accept(this, argu);  // type of object
-        String methodName = n.f2.accept(this, null);  // method name
+        String objectType = n.f0.accept(this, argu); 
+        String methodName = n.f2.accept(this, null); 
     
         // Check if it's a valid class type
         if((!symboltable.isTypeClass(objectType)) && (!objectType.equals("this"))){
-
             throw new Exception("MessageSend error: cannot call method on " + objectType);
         }
 
@@ -520,14 +516,14 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         // check if object class or parent class contains the specific method
 
-        // first we need to construct the string with the arguments of the function call
+        // first we need to construct the string with the arguments of the function call.
         // ExpressionList returns string of format "type1 type2 type3 ..."
         String typesStr = n.f4.accept(this, argu);
+        if(typesStr == null)
+            typesStr = "";
 
         if(!symboltable.containsMethodWithTypes(objectType, methodName, typesStr)){
-            if(typesStr == null)
-                typesStr = "";
-            throw new Exception("MessageSend error: class " + objectType + " does not contain method " + methodName + "( " + typesStr +  ")");
+            throw new Exception("MessageSend error: class " + objectType + " does not contain method " + methodName + "(" + typesStr +  ")");
         }
         
         // the type of the messageSend result is the return type of the method
@@ -630,8 +626,7 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(!type.equals("int")){
             throw new Exception("Array Allocation error: type of allocation size is not an int");
         }
-
-
+        
         return "int[]";
     }
 

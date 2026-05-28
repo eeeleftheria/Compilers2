@@ -59,7 +59,6 @@ public class MethodSymbol{
 
     public void addLocalField(String name, String type){
         FieldSymbol fs = new FieldSymbol(name, type, 0);
-
         localFields.add(fs);
     }
 

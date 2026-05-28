@@ -8,46 +8,52 @@ import java.util.Vector;
 public class SymbolTable{
     
     private LinkedHashMap<String, ClassSymbol> symbolTable;
+    private String mainClass; 
 
     public SymbolTable(){
         symbolTable = new LinkedHashMap<>(100);
     }
 
-    private String mainClass;
 
-    // inserts a new class to the symbol table, along with its parent if it is a subclass
+    // inserts a new class to the symbol table
     public void addClass(String name){
 
         ClassSymbol cs = new ClassSymbol(name);
-
         symbolTable.put(name, cs);
     }
 
+    // sets the name of the main class
     public void setMainClass(String name){
         mainClass = name;
     }
 
     // if the class extends another one, store its parent
     public void addParentClass(String className, String parent){
+        
         symbolTable.get(className).setParentClass(parent);
+        
+        // the fields of the child class, should have as offset
+        // the fields' size of the parent classes
         int bytes = symbolTable.get(parent).getTotalFieldBytes();
         symbolTable.get(className).setTotalFieldBytes(bytes);
        
+        // ???? not implemented correctly yet
         int bytes2 = symbolTable.get(parent).getTotalMethodBytes();
         symbolTable.get(className).setTotalMethodBytes(bytes2);
         
     }
 
-    // inserts a field to the class with name className
+    // inserts a field to a class
     public void addClassField(String className, String field, String type, int typeSize){
         symbolTable.get(className).addField(field, type, typeSize);
     }
 
-    // inserts a method to the class with name className
+    // inserts a method to a class
     public void addClassMethod(String className, String method, String returnType){
         symbolTable.get(className).addMethod(method, returnType);
     }
 
+    // adds the parameters of a class' method and stores the appropriate offset for the method
     public void addAllParameters(String className, String method, String pars){
         symbolTable.get(className).addAllParameters(method, pars);
 
@@ -73,7 +79,8 @@ public class SymbolTable{
         symbolTable.get(className).setMethodOffset(method, types, off);
 
     }
-    // adds a local field to the method symbol
+
+    // adds a local field to a method
     public void addMethodLocal(String className, String method, String name, String type, String pars){
         symbolTable.get(className).addLocalField(method, type, name, pars);
     }
@@ -84,7 +91,6 @@ public class SymbolTable{
         if(symbolTable.size() > 1)
             System.out.println("========SYMBOL TABLE========\n");
 
-        
         for(String key: symbolTable.keySet()){
 
             if(key.equals(mainClass))
@@ -165,7 +171,6 @@ public class SymbolTable{
         }
 
         return getType(parent, var, method, args, false);
-
     }
 
 
@@ -187,10 +192,10 @@ public class SymbolTable{
             // if A a = new C(): true
             else{
                 ClassSymbol curr = bclass;
-                ClassSymbol left = aclass;
+                ClassSymbol superClass = aclass;
 
                 while(!curr.getParentClass().isEmpty()){
-                    if(curr.getParentClass().equals(left.getName())){
+                    if(curr.getParentClass().equals(superClass.getName())){
                         return true;
                     }
 
@@ -273,6 +278,7 @@ public class SymbolTable{
         for(MethodSymbol m : symbolTable.get(classn).getMethods()){
             if(m.getName().equals(methodName)){
                 
+                // contains: type var type var ...
                 String pars = m.getParametersString2();
                 
                 // handle null parameters from both sources
@@ -328,7 +334,7 @@ public class SymbolTable{
 
 
     // check if the current class contains the method,
-    // if not, check parent class recursively
+    // if not, check parent classes recursively
     public boolean containsMethodWithTypes(String classn, String methodn, String pars){
 
         MethodSymbol m = getMethodWithTypes(classn, methodn, pars);
@@ -348,6 +354,66 @@ public class SymbolTable{
 
     }
 
+
+    // Checks recursively for the method, and returns its return type.
+    // If it does not exist in current class, it checks its parent classes
+    public String getReturnTypeOfMethod(String classn, String method, String pars){
+        
+        MethodSymbol m = getMethodWithTypes(classn, method, pars);
+        if(m == null){
+            String parent = symbolTable.get(classn).getParentClass();
+
+            // check recursively for the method inside the parent class
+            if(!parent.equals(""))
+                return getReturnTypeOfMethod(parent, method, pars);
+            else
+                return null;
+        }
+        else
+            return m.getReturnType();
+    }
+
+    // check if new method can overload: must differ from existing methods by at least one argument position
+    // returns true if the method can be overloaded, else false
+    public boolean checkOverloadedMethod(String classn, String methodn, String pars){
+
+        // a vector with all methods of the same name and same number of arguments:
+        // this kind of overloading must satisfy the need for at least one argument position
+        // to have a different type between the two methods
+        Vector<MethodSymbol> funcs = symbolTable.get(classn).checkOverloadedMethods(methodn, pars);
+        
+        for(MethodSymbol m: funcs){
+            String currPars = m.getParametersString2();
+            if(currPars == null){
+                currPars = "";
+            }
+            
+            // Format: "type var type var ..."
+            String[] parts1 = currPars.split(" ");
+            String[] parts2 = pars.split(" ");
+
+            // check if at least one argument position is not related (subtype/supertype)
+            boolean hasUnrelatedPosition = false;
+            for(int i = 0; i < parts1.length; i=i+2){
+               
+                if((!isSubtype(parts1[i], parts2[i])) && (!isSubtype(parts2[i], parts1[i]))){
+                    hasUnrelatedPosition = true;
+                    break;
+                }
+            }
+            
+            // if all positions are related, this method cannot be overloaded
+            if(hasUnrelatedPosition == false){
+                return false;
+            }
+        }
+
+        // this point is reached only if there is no 
+        // function that creates a conflict with the one we want to add
+        return true;
+    }
+
+    
     public int calculateMethodOffset(String classn, String methodn, String pars){
 
         String parent = symbolTable.get(classn).getParentClass();
@@ -381,60 +447,6 @@ public class SymbolTable{
         
         // in this case we do not have any overridden method
         return -1;
-    }
-
-
-
-    public String getReturnTypeOfMethod(String classn, String method, String pars){
-        
-        MethodSymbol m = getMethodWithTypes(classn, method, pars);
-        if(m == null){
-            String parent = symbolTable.get(classn).getParentClass();
-
-            // check recursively for the method inside the parent class
-            if(!parent.equals(""))
-                return getReturnTypeOfMethod(parent, method, pars);
-            else
-                return null;
-        }
-        else
-            return m.getReturnType();
-    }
-
-    // check if new method can overload: must differ from existing methods by at least one argument position
-    public boolean checkOverloadedMethod(String classn, String methodn, String pars){
-        Vector<MethodSymbol> funcs = symbolTable.get(classn).checkOverloadedMethods(methodn, pars);
-        
-        // check each existing method with same name and number of parameters
-        for(MethodSymbol m: funcs){
-            String currPars = m.getParametersString2();
-            if(currPars == null){
-                currPars = "";
-            }
-            
-            // Format: "type var type var ..."
-            String[] parts1 = currPars.split(" ");
-            String[] parts2 = pars.split(" ");
-
-            // check if at least one argument position is not related (subtype/supertype)
-            boolean hasUnrelatedPosition = false;
-            for(int i = 0; i < parts1.length; i=i+2){
-               
-                if((!isSubtype(parts1[i], parts2[i])) && (!isSubtype(parts2[i], parts1[i]))){
-                    hasUnrelatedPosition = true;
-                    break;
-                }
-            }
-            
-            // if all positions are related, this method cannot be overloaded
-            if(hasUnrelatedPosition == false){
-                return false;
-            }
-        }
-
-        // this point is reached only if there is no 
-        // function that creates a conflict with the one we want to add
-        return true;
     }
 
     public void printOffsets(){

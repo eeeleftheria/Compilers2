@@ -44,7 +44,7 @@ public class ClassSymbol{
     }
 
     // if the class extends another one then
-    // the initial offset is the parent's size
+    // the initial offset is the parent's size of fields
     public void setTotalFieldBytes(int s){
         totalFieldBytes += s;
     }
@@ -78,28 +78,9 @@ public class ClassSymbol{
     public void addMethod(String name, String returnType){
 
         MethodSymbol ms = new MethodSymbol(name, returnType, totalMethodBytes);
-
         methods.add(ms);
     }
 
-    public void setName(String n){
-        name = n;
-    }
-
-    // returns true if the methods was found and the parameter was inserted successfully.
-    // pars corresponds to the current parameters that have been already added to the Symbol Table
-    private boolean addParam(String method, String type, String name, String pars){
-       
-        MethodSymbol foundMethod = getMethod(method, pars);
-       
-        if (foundMethod != null){
-            foundMethod.addParam(name, type);
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
 
     // Given a method name and a string with all of its parameters it adds them one by one to the ST.
     // Returns true if the parameters were added successfully, else false
@@ -110,20 +91,19 @@ public class ClassSymbol{
         MethodSymbol foundMethod = getMethodByName(method);
         
         if (foundMethod != null){
-
+            
             if(pars != null){
-
+                
                 // split the string 
                 String[] parts = pars.trim().split(" "); // this contains [type1, var1, type2, var2, ...]
-               
+                
                 for(int i = 0; i < parts.length - 1; i += 2){
-    
+                    
                     foundMethod.addParam(parts[i+1], parts[i]);
                 }
-    
+                
             }
             return true;
-
         }
         else{
             return false;
@@ -133,7 +113,7 @@ public class ClassSymbol{
     public boolean addLocalField(String method, String type, String name, String pars){
         MethodSymbol foundMethod = getMethod(method, pars);
        
-        if (foundMethod != null){
+        if(foundMethod != null){
             foundMethod.addLocalField(name, type);
             return true;
         } 
@@ -142,7 +122,7 @@ public class ClassSymbol{
         }
     }
 
-    // searches for the specific method with the specific parameters (format: type par type par ...)
+    // searches for the specific method with the specific parameters (both name and types with format: type par type par ...)
     // in case of overloading and returns the methodSymbol if found, else null
     public MethodSymbol getMethod(String methodName, String parameters){
 
@@ -258,29 +238,6 @@ public class ClassSymbol{
         return null;
     }
 
-    public void printClassSymbol(){
-        System.out.println("Fields: ");
-
-        // print class fields
-        for(FieldSymbol item: fields){
-            System.out.println("  "+ item.getName() + " " + item.getType());
-        }
-
-        System.out.println("Methods: ");
-
-        // print class methods and their parameters
-        for(MethodSymbol item: methods){
-            System.out.println("  " + item.getReturnType() + " " + item.getName() + item.getParametersString());
-
-            System.out.println("    Local fields:");
-
-            // print the local fields of each method
-            for(FieldSymbol f: item.getLocals()){
-                System.out.println("       " + f.getName() + " " + f.getType());
-            }
-        }
-
-    }
 
      // FUNCTIONS USED FOR TYPE CHECKING
      
@@ -353,17 +310,39 @@ public class ClassSymbol{
                 
                 // add the method to the vector if both have the same num of arguments
                 // If the parameters are the exact same, dont calculate as an overloaded
-                // func because the method is refering the the one we are checking, since
-                // it has already been added in the symbol table from the 1st visitor
-
+                // func because the method is refering to the one we are checking, since
+                // it has already been added to the symbol table from the 1st visitor
                 if((parts1.length == parts2.length) && !(pars.equals(parameters))){
                     overloadedFuncs.add(m);
-                    
                 }
             }
         }
     
         return overloadedFuncs;
+    }
+
+    public void printClassSymbol(){
+        System.out.println("Fields: ");
+
+        // print class fields
+        for(FieldSymbol item: fields){
+            System.out.println("  "+ item.getName() + " " + item.getType());
+        }
+
+        System.out.println("Methods: ");
+
+        // print class methods and their parameters
+        for(MethodSymbol item: methods){
+            System.out.println("  " + item.getReturnType() + " " + item.getName() + item.getParametersString());
+
+            System.out.println("    Local fields:");
+
+            // print the local fields of each method
+            for(FieldSymbol f: item.getLocals()){
+                System.out.println("       " + f.getName() + " " + f.getType());
+            }
+        }
+
     }
 
 

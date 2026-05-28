@@ -14,7 +14,7 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
 
     // gets a string of format "type var type var ..."
     // and returns true if all var names are differnt
-    // else false   
+    // else false: used for checking double variables in parameters
     boolean allParamNamesAreDifferent(String params){
         String[] parts = params.split(" ");
         for(int i = 1; i < parts.length; i = i + 2){
@@ -29,9 +29,7 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
                     return false;
                 }
             }
-
         }
-
         return true;
     }
     
@@ -50,7 +48,7 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         System.out.println("\n");
         symboltable.printOffsets();
 
-        return "";
+        return null;
     }
    
     /**
@@ -103,6 +101,7 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         
         String classname = n.f1.accept(this, argu);
 
+        // SEMANTIC CHECK: double declaration of class
         if(symboltable.containsClass(classname)){
             throw new Exception("Double declaration error: Class " + classname + " already exists");
         }
@@ -134,11 +133,11 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         String classname = n.f1.accept(this, null);
         
+        // SEMANTIC CHECK: double declaration of class
         if(symboltable.containsClass(classname)){
             throw new Exception("Double declaration error: Class " + classname + " already exists");
         }
         symboltable.addClass(classname);
-        
         
         VisitorArgs args = new VisitorArgs(classname, "", "", "", "");
         
@@ -163,7 +162,6 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(VarDeclaration n, VisitorArgs args) throws Exception {
-        String _ret=null;
 
         String className = args.getClassName();
         String type = n.f0.accept(this, args);
@@ -173,18 +171,18 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(args.inMethod() == false){
 
             int size = symboltable.getSizeOfField(type);
-
             symboltable.addClassField(className, var, type, size);
         }
         // in this case the field comes from a method decl
         else{
+            // SEMANTIC CHECK: double declaration of field
             if(symboltable.containsMethodLocal(className, args.getMethodName(), var, args.getParameters())){
                 throw new Exception("Double declaration error: Field " + var + " already exists in method " + args.getMethodName() + " of class " + args.getClassName());                
             }
             symboltable.addMethodLocal(className, args.getMethodName(), var, type, args.getParameters());
         }
 
-        return _ret;
+        return null;
     }
 
     /**
@@ -208,7 +206,6 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         String myType = n.f1.accept(this, argu);
         String myName = n.f2.accept(this, argu);
 
-        
         VisitorArgs args = new VisitorArgs(argu.getClassName(), myName, "-", myType, "");
         args.setInMethod(); // set flag to true, since we are inside of a method decl
         
@@ -216,13 +213,13 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         String argumentList = n.f4.present() ? n.f4.accept(this, args) : "";
         args.setParameters(argumentList);
 
-        // check for parameters with same name
+        // SEMANTIC CHECK: double declaration of a parameter
         if(!allParamNamesAreDifferent(argumentList)){
             throw new Exception("Method declaration error: Method " + args.getMethodName() + "(" + argumentList + ") of class " 
             + args.getClassName() + " contains double parameter declaration"); 
         }
             
-        // check if the method already exists before adding it
+        // SEMANTIC CHECK: double declaration of method
         if(symboltable.containsMethod(args.getClassName(), args.getMethodName(), argumentList))
             throw new Exception("Double method declaration: Method " + args.getMethodName() + "(" + argumentList + ") of class " 
             + args.getClassName() + " already exists");                

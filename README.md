@@ -6,7 +6,8 @@ The following implementation was based mainly on last year's lecture suggestions
 ### Symbol Table
 The symbol table was implemented using a `Linked Hash Map`, so the order of insertion is preserved.
 
-This data structure maps `Class names` to `ClassSymbols` that represent a class. 
+This data structure maps `Class names` to `ClassSymbols` that represent a class and also stores
+the name of the class that corresponds to main. 
 
 ```java
 public class ClassSymbol{
@@ -123,16 +124,19 @@ make clean
 
 ## ToDo / Future improvements
 
+
+- Method offsets:
+To implement the offset logic for the methods, I implemented the following function in the `SymbolTable.java` file:
+
+    The `calculateMethodOffset` function is called inside `addAllParameters()` as the final step for the method's declaration. More specifically, it detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes it returns -1, meaning the offset should be calculated in a cumulative way. The above functions seem to function properly, after a few tests, meaning the issue is later.
+
+- Field offsets: 
+field offsets mostly function properly, however I have not handled the case in which a class has a field of the same type (the type of the class).
+Therefore, in those cases the final offsets for the fields may also appear wrong.
+
 - Assignment statement: more specific errors, like throwing an exception
 when either the lvalue or rvalue was not declared. Current implementation of identifier node
 makes it unfeasible.
-
-- offsets are only correct for fields and not methods:
-To implement the offset logic for the methods, I tried following the steps:
-    1. Inside function `addAllParameters` which is the final step for the creation of a method, I tried calculating the appropriate offset through the
-    `calculateMethodOffset` function.
-    2. The `calculateMethodOffset` function in specific, detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes, then it returns -1, meaning the offset should be calculated in a cumulative way. The above functions seem to function properly, after a few tests, meaning the issue is later.
-    3. `setMethodOffset` function is called on the class.  
 
 ## Tests with known issues:
 
@@ -142,8 +146,7 @@ To implement the offset logic for the methods, I tried following the steps:
 - test20
 - test82
 - test93
-- test99: how can i know size of class which has a field of
-the same type?  
+- test99: 
 
 
 - BinaryTree: wrong field offsets because it contains types of current class
