@@ -134,7 +134,7 @@ Some of the most important checks are:
 #### Method offsets
 To implement the offset logic for the methods, I implemented the following function in the `SymbolTable.java` file:
 
-    The `calculateMethodOffset` function is called inside `addMethodOffset()` function of the symbol table visitor as as the final step for the method's declaration. The function detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes it returns -1, meaning the offset should be calculated in a cumulative way. 
+   The `calculateMethodOffset` function is called inside `addMethodOffset()` function of the symbol table visitor as as the final step for the method's declaration. The function detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes it returns -1, meaning the offset should be calculated in a cumulative way. 
 
 ## How to Run
 
