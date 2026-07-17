@@ -427,6 +427,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(CompareExpression n, VisitorArgs argu) throws Exception{
+        String lType = n.f0.accept(this, argu);
+        String rType = n.f2.accept(this, argu);
+        if(!lType.equals("int") || !rType.equals("int")){
+            throw new Exception("Compare Expression error: both operands must be integers");
+        }
         return "boolean";
     }
 
@@ -437,6 +442,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(PlusExpression n, VisitorArgs argu) throws Exception{
+        String lType = n.f0.accept(this, argu);
+        String rType = n.f2.accept(this, argu);
+        if(!lType.equals("int") || !rType.equals("int")){
+            throw new Exception("Plus Expression error: both operands must be integers, but instead they are: " + lType + " and " + rType);
+        }
         return "int";
     }
 
@@ -447,6 +457,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(MinusExpression n, VisitorArgs argu) throws Exception{
+        String lType = n.f0.accept(this, argu);
+        String rType = n.f2.accept(this, argu);
+        if(!lType.equals("int") || !rType.equals("int")){
+            throw new Exception("Minus Expression error: both operands must be integers");
+        }
         return "int";
     }
 
@@ -457,6 +472,11 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
      */
     @Override
     public String visit(TimesExpression n, VisitorArgs argu) throws Exception{
+        String lType = n.f0.accept(this, argu);
+        String rType = n.f2.accept(this, argu);
+        if(!lType.equals("int") || !rType.equals("int")){
+            throw new Exception("Times Expression error: both operands must be integers");
+        }
         return "int";
     }
 
@@ -654,6 +674,10 @@ class TypeCheckingVisitor extends GJDepthFirst<String, VisitorArgs>{
     */
     @Override
     public String visit(NotExpression n, VisitorArgs argu) throws Exception{ 
+        String type = n.f1.accept(this, null);
+        if(!type.equals("boolean")){
+            throw new Exception("Not expression: operand of '!' must be boolean");
+        }
         return "boolean";
     }
 

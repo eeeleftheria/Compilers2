@@ -268,6 +268,11 @@ public class SymbolTable{
         return symbolTable.get(classn).containsMethodLocal(methodn, local, pars);
     }
 
+    public boolean containsClassField(String classn, String var){
+
+        return symbolTable.get(classn).containsClassField(var);
+    }
+
     public boolean containsMethod(String classn, String methodn, String pars){
 
         return symbolTable.get(classn).containsMethod(methodn, pars);

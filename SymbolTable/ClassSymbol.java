@@ -276,6 +276,16 @@ public class ClassSymbol{
         return getMethod(methodn, pars).containsLocal(local);
     }
 
+    // returns true if the class contains a field named var, else false
+    public boolean containsClassField(String var){
+        for(FieldSymbol f: fields){
+            if(f.getName().equals(var))
+                return true;
+        }
+
+        return false;
+    }
+
     public boolean containsMethod(String methodn, String pars){
 
         MethodSymbol m = getMethod(methodn, pars);

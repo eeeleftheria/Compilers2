@@ -171,6 +171,9 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
         if(args.inMethod() == false){
 
             int size = symboltable.getSizeOfField(type);
+            if(symboltable.containsClassField(className, var)){
+                throw new Exception("Double declaration error: Field " + var + " already exists in class " + args.getClassName());                
+            }
             symboltable.addClassField(className, var, type, size);
         }
         // in this case the field comes from a method decl
