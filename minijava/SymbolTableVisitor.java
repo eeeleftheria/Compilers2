@@ -226,7 +226,8 @@ class SymbolTableVisitor extends GJDepthFirst<String, VisitorArgs>{
 
         symboltable.addClassMethod(argu.getClassName(), myName, myType);
         symboltable.addAllParameters(args.getClassName(), args.getMethodName(), argumentList);
-        
+        symboltable.addMethodOffset(args.getClassName(), args.getMethodName(), argumentList);
+
         // visit the local fields
         n.f7.accept(this, args);
 

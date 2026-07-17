@@ -130,25 +130,7 @@ To implement the offset logic for the methods, I implemented the following funct
 
     The `calculateMethodOffset` function is called inside `addAllParameters()` as the final step for the method's declaration. More specifically, it detects the root of the hierarchy, meaning it reaches the class with no parent. Then, starting from the root and going down, it checks if the current class contains the method we are trying to calculate the offset for. The first time it finds the method, it keeps that offset and returns it. If no method was found in the parent classes it returns -1, meaning the offset should be calculated in a cumulative way. The above functions seem to function properly, after a few tests, meaning the issue is later.
 
-- Field offsets: 
-field offsets mostly function properly, however I have not handled the case in which a class has a field of the same type (the type of the class).
-Therefore, in those cases the final offsets for the fields may also appear wrong.
-
 - Assignment statement: more specific errors, like throwing an exception
 when either the lvalue or rvalue was not declared. Current implementation of identifier node
 makes it unfeasible.
 
-## Tests with known issues:
-
-- Classes.txt
-- Main.txt
-- ShadowBaseField
-- test20
-- test82
-- test93
-- test99: 
-
-
-- BinaryTree: wrong field offsets because it contains types of current class
-- LinkedList: same
-- TreeVisitor: same

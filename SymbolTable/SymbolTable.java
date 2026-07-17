@@ -56,6 +56,9 @@ public class SymbolTable{
     // adds the parameters of a class' method and stores the appropriate offset for the method
     public void addAllParameters(String className, String method, String pars){
         symbolTable.get(className).addAllParameters(method, pars);
+    }
+
+    public void addMethodOffset(String className, String method, String pars){
 
         // now that the method to add has parameters
         // check if it is an override: if yes
@@ -68,7 +71,7 @@ public class SymbolTable{
             symbolTable.get(className).setTotalMethodBytes(off + 8);
         }
 
-        String[] parts = pars.split("");
+        String[] parts = pars.split(" ");
         String types = "";
         for(int i = 0; i < parts.length; i=i+2){
             types += parts[i];
@@ -77,7 +80,6 @@ public class SymbolTable{
             }
         }
         symbolTable.get(className).setMethodOffset(method, types, off);
-
     }
 
     // adds a local field to a method
@@ -249,8 +251,9 @@ public class SymbolTable{
             else if(type.equals("int[]"))
                 return 8;
         }
+        // object reference (pointer 8 bytes)
         else if(isTypeClass(type)){
-            return symbolTable.get(type).getTotalFieldBytes();
+            return 8;
         }
 
         return 0;
